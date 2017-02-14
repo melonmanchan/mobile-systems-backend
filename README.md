@@ -11,15 +11,18 @@
     email                 : varchar                    : required
     location              : geolocation                : required
     authentication_method : fk -> AuthenticationMethod : required
-    user_role             : fk -> UserRole             : required
+    user_type             : fk -> UserType             : required
 ```
 
 
-### UserRole
+### UserType
+
+TODO: Intermediate table between subject to indicate skill level
 
 ```
     id   : int (PK) : required
     type : varchar  : required
+    tutor_subjects : 1 ->*
 ```
 
 ### Authentication Method
@@ -32,11 +35,14 @@
 ### Tutorship
 
 ```
-    id       : int (PK)         : required
-    tutor    : fk -> User       : required
-    tutee    : fk -> User       : required
-    homework : fk 1->m Homework
-    classes  : fk 1->m Class
+    id             : int (PK)         : required
+    tutor          : fk -> User       : required
+    tutee          : fk -> User       : required
+    written_review : text
+    rating         : 1-5
+    homework       : fk 1->m Homework
+    classes        : fk 1->m Class
+    subject        : m->m Subject     : required
 ```
 
 ### Messages
@@ -47,4 +53,20 @@
     sender    : fk -> User : required
     time_sent : datetime   : required
     content   : text       : required
+```
+
+### Homework
+
+```
+    id      : int (PK) : required
+    content : text     : required
+```
+
+### Class
+
+```
+    id          : int (PK) : required
+    start_time  : datetime : required
+    description : text     : required
+    rating      : 1-5      : required
 ```
