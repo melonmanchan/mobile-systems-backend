@@ -22,7 +22,21 @@ TODO: Intermediate table between subject to indicate skill level
 ```
     id   : int (PK) : required
     type : varchar  : required
-    tutor_subjects : 1 ->*
+```
+
+### TutorSubject
+
+```
+    id      : int (PK)   : required
+    user    : fk -> User : required
+    subject : 1->1       : required
+    rating  : 1-5        : required
+```
+
+### Calendar
+```
+    id      : int (PK)   : required
+    user    : fk -> User : required
 ```
 
 ### Authentication Method
@@ -62,11 +76,21 @@ TODO: Intermediate table between subject to indicate skill level
     content : text     : required
 ```
 
+### Reservation
+Reservation is potential class in calendar???
+
+```
+    id                     : int (PK)   : required
+    class                  : 1->1 Class
+    calendar *->1 Calendar
+    time                   : datetime   : required
+    approved               : bool       : required
+```
+
 ### Class
 
 ```
     id          : int (PK) : required
-    start_time  : datetime : required
     description : text     : required
-    rating      : 1-5      : required
+    rating      : 1-5      :
 ```
