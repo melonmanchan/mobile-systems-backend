@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"time"
 
+	"./handlers"
 	"./models"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	mainRouter := mux.NewRouter()
 
 	db, err := models.ConnectToDatabase()
 
@@ -19,11 +19,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
+	mainRouter := mux.NewRouter()
 
-	mainRouter.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Write([]byte("Hello"))
-	})
+	authRouter := mainRouter.PathPrefix("/auth").Subrouter()
+	handlers.AuthHandler(db, authRouter)
+
+	defer db.Close()
 
 	server := &http.Server{
 		Handler:      mainRouter,
@@ -32,5 +33,6 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	log.Println("Listening on port 8080")
 	log.Fatal(server.ListenAndServe())
 }

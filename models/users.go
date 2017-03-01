@@ -1,7 +1,7 @@
 package models
 
 // GetUser ...
-func GetUser(c Client) (*string, error) {
+func (c Client) GetUser() (*string, error) {
 	ret := "asd"
 	return &ret, nil
 }
