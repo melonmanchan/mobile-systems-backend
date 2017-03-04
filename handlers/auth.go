@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -19,13 +20,9 @@ func AuthHandler(client *models.Client, r *mux.Router) {
 			log.Fatal(err)
 		}
 
-		log.Print(user.AuthenticationMethod.ID)
-		log.Print(user.AuthenticationMethod.Type)
-
-		log.Print(user.UserType.ID)
-		log.Print(user.UserType.Type)
-
-		w.Write([]byte(user.AuthenticationMethod.Type + user.UserType.Type))
+		log.Println(user.ID)
+		encoded, err := json.Marshal(user)
+		w.Write(encoded)
 	})
 
 }
