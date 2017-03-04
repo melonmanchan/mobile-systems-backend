@@ -1,6 +1,7 @@
 package models
 
 import (
+	"../config"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -10,7 +11,7 @@ type Client struct {
 }
 
 // ConnectToDatabase ...
-func ConnectToDatabase() (*Client, error) {
+func ConnectToDatabase(pgConf config.PostgresConfig) (*Client, error) {
 	return &Client{DB: nil}, nil
 }
 

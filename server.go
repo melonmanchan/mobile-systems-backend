@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"./config"
 	"./handlers"
 	"./models"
 
@@ -13,7 +14,9 @@ import (
 
 func main() {
 
-	db, err := models.ConnectToDatabase()
+	config := config.ParseTuteeConfig()
+
+	db, err := models.ConnectToDatabase(config.PgConf)
 
 	if err != nil {
 		log.Fatal(err)
