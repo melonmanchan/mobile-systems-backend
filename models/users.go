@@ -4,38 +4,38 @@ import "database/sql"
 
 // User ...
 type User struct {
-	ID        int64          `json:"id" db:"user_id"`
-	FirstName string         `json:"first_name" db:"user_first_name"`
-	LastName  string         `json:"last_name" db:"user_last_name"`
-	Email     string         `json:"email" db:"user_email"`
-	Password  sql.NullString `json:"-" db:"user_password"`
-	UserType
-	AuthenticationMethod
+	ID                   int64                `json:"-" db:"id"`
+	FirstName            string               `json:"first_name" db:"first_name"`
+	LastName             string               `json:"last_name" db:"last_name"`
+	Email                string               `json:"email" db:"email"`
+	Password             sql.NullString       `json:"-" db:"password"`
+	UserType             UserType             `json:"user_type" db:"user_type"`
+	AuthenticationMethod AuthenticationMethod `json:"auth_method"  db:"auth_method"`
 }
 
 // AuthenticationMethod ...
 type AuthenticationMethod struct {
-	ID   int64  `json:"-" db:"authentication_method_id"`
-	Type string `json:"auth_type" db:"authentication_method_type"`
+	ID   int64  `json:"-" db:"id"`
+	Type string `json:"type" db:"type"`
 }
 
 // UserType ...
 type UserType struct {
-	ID   int64  `json:"-" db:"user_type_id"`
-	Type string `json:"user_type" db:"user_type_type"`
+	ID   int64  `json:"-" db:"id"`
+	Type string `json:"type" db:"type"`
 }
 
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string) (*User, error) {
 	user := User{}
 	err := c.DB.Get(&user, `
-	SELECT users.user_id , users.user_first_name, users.user_last_name, users.user_email, users.user_password,
-	user_types.user_type_id, user_types.user_type_type,
-	authentication_methods.authentication_method_id, authentication_methods.authentication_method_type
+	SELECT users.id , users.first_name, users.last_name, users.email, users.password,
+	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
-	INNER JOIN user_types ON users.user_user_type = user_types.user_type_id
-	INNER JOIN authentication_methods ON users.user_auth_method = authentication_methods.authentication_method_id
-	WHERE users.user_email = $1;`, email)
+	INNER JOIN user_types ON users.user_type = user_types.id
+	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
+	WHERE users.email = $1;`, email)
 
 	if err != nil {
 		return nil, err
