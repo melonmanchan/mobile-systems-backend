@@ -22,12 +22,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	defer db.Close()
+
 	mainRouter := mux.NewRouter()
 
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter()
 	handlers.AuthHandler(db, authRouter)
-
-	defer db.Close()
 
 	server := &http.Server{
 		Handler:      mainRouter,
