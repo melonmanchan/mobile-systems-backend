@@ -24,6 +24,16 @@ func main() {
 
 	defer db.Close()
 
+	log.Println("Performing migrations...")
+
+	errs := models.PerformPendingMigrations(config.PgConf)
+
+	if errs != nil {
+		log.Fatal(errs)
+	}
+
+	log.Println("Migrations performed succesfully!")
+
 	mainRouter := mux.NewRouter()
 
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter()
@@ -36,6 +46,6 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Println("Listening on port 8080")
+	log.Println("Server listening on port 8080")
 	log.Fatal(server.ListenAndServe())
 }

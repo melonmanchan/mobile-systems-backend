@@ -4,6 +4,9 @@ import (
 	_ "database/sql"
 	"log"
 
+	_ "github.com/mattes/migrate/driver/postgres"
+	"github.com/mattes/migrate/migrate"
+
 	_ "github.com/lib/pq"
 
 	"../config"
@@ -13,6 +16,19 @@ import (
 // Client ...
 type Client struct {
 	DB *sqlx.DB
+}
+
+// PerformPendingMigrations ...
+func PerformPendingMigrations(pgConf config.PostgresConfig) []error {
+	connectionString := pgConf.PostgresConfigToConnectionString()
+
+	errors, ok := migrate.UpSync(connectionString, "./migrations")
+
+	if !ok {
+		return errors
+	}
+
+	return nil
 }
 
 // ConnectToDatabase ...
