@@ -16,19 +16,26 @@ type User struct {
 // AuthenticationMethod ...
 type AuthenticationMethod struct {
 	ID   int64
-	Type string
+	Type string `db:"auth_method_desc"`
 }
 
 // UserType ...
 type UserType struct {
 	ID   int64
-	Type string
+	Type string `db:"user_type_desc"`
 }
 
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string) (*User, error) {
 	user := User{}
-	err := c.DB.Get(&user, "SELECT users.id, users.first_name, users.last_name, users.email, users.password, user_types.id, user_types.type, authentication_methods.id, authentication_methods.type from users inner join user_types on users.user_type = user_types.id inner join authentication_methods on users.auth_method = authentication_methods.id WHERE users.email = $1;", email)
+	err := c.DB.Get(&user, `
+	SELECT users.id, users.first_name, users.last_name, users.email, users.password,
+	user_types.id, user_types.user_type_desc,
+	authentication_methods.id, authentication_methods.auth_method_desc
+	FROM users
+	INNER JOIN user_types ON users.user_type = user_types.id
+	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
+	WHERE users.email = $1;`, email)
 
 	if err != nil {
 		return nil, err

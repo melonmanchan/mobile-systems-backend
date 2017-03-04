@@ -19,9 +19,13 @@ func AuthHandler(client *models.Client, r *mux.Router) {
 			log.Fatal(err)
 		}
 
-		log.Print(user)
+		log.Print(user.AuthenticationMethod.ID)
+		log.Print(user.AuthenticationMethod.Type)
 
-		w.Write([]byte(user.FirstName))
+		log.Print(user.UserType.ID)
+		log.Print(user.UserType.Type)
+
+		w.Write([]byte(user.AuthenticationMethod.Type + user.UserType.Type))
 	})
 
 }
