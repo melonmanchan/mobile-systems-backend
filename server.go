@@ -18,8 +18,10 @@ import (
 
 func main() {
 
+	// First off, parse configuration variables from the server environment
 	config := config.ParseTuteeConfig()
 
+	// Attempt to fetch a database connection
 	db, err := models.ConnectToDatabase(config.PgConf)
 
 	if err != nil {
@@ -30,6 +32,8 @@ func main() {
 
 	log.Println("Performing migrations...")
 
+	// Automatically migrate database models if there are any that are unapplied
+	// We use github.com/mattes/migrate
 	errs := models.PerformPendingMigrations(config.PgConf)
 
 	if errs != nil {
@@ -45,14 +49,17 @@ func main() {
 		}
 	}
 
+	// These are common middleware to be used for every route
 	n := negroni.New(
 		negroni.NewLogger(),
 		middleware.SetContentType(),
 		recovery.JSONRecovery(true),
 	)
 
+	// App variable holding the database connection and configuration that we can inject into handy places!
 	app := app.App{Client: *db, Config: config}
 
+	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()
 
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)

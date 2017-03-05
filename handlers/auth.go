@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"../app"
@@ -15,13 +14,31 @@ func AuthHandler(app app.App, r *mux.Router) {
 
 	// Logging in
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		user, err := client.GetUserByEmail("a@a.com")
+		decoder := json.NewDecoder(r.Body)
+		var req LoginRequest
+		var resp LoginResponse
+
+		defer r.Body.Close()
+
+		err := decoder.Decode(&req)
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
-		log.Println(user.ID)
+		errs := req.GetErrors()
+
+		if errs != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			panic(errs)
+		}
+
+		user, err := client.GetUserByEmail(req.Email)
+
+		if err != nil {
+			panic(err)
+		}
+
 		encoded, err := json.Marshal(user)
 		w.Write(encoded)
 	}).Methods("POST")
