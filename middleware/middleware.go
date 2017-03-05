@@ -16,15 +16,36 @@ func SetContentType() negroni.HandlerFunc {
 	}
 }
 
+// JSONRecovery ...
+func JSONRecovery() negroni.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		defer func() {
+			if err := recover(); err != nil {
+				var errorMessages []string
+
+				if e, ok := err.(error); ok {
+					errorMessages = append(errorMessages, e.Error())
+				} else if errs, ok := err.([]error); ok {
+					for _, e := range errs {
+						errorMessages = append(errorMessages, e.Error())
+					}
+				}
+
+				errMap := map[string][]string{
+					"errors": errorMessages,
+				}
+
+				errJSON, _ := json.Marshal(errMap)
+
+				rw.Write(errJSON)
+			}
+		}()
+		next(rw, r)
+	}
+}
+
 // NotFoundHandler ...
 func NotFoundHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotFound)
-
-	err := map[string]string{
-		"error": fmt.Sprintf("Matching not found for %s with method %s", r.RequestURI, r.Method),
-	}
-
-	errJSON, _ := json.Marshal(err)
-
-	rw.Write(errJSON)
+	panic(fmt.Errorf("Matching route not found for %s with method %s", r.RequestURI, r.Method))
 }

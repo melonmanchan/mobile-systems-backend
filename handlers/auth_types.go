@@ -27,13 +27,13 @@ func (req LoginRequest) IsValid() (bool, []error) {
 	var errs []error
 
 	if req.Email == "" {
-		errs = append(errs, fmt.Errorf("Email address is required!"))
+		errs = append(errs, fmt.Errorf("email address is required"))
 	} else if !v.IsEmail(req.Email) {
-		errs = append(errs, fmt.Errorf("%s is not a valid email address!", req.Email))
+		errs = append(errs, fmt.Errorf("%s is not a valid email address", req.Email))
 	}
 
 	if req.Password == "" {
-		errs = append(errs, fmt.Errorf("Password is required!"))
+		errs = append(errs, fmt.Errorf("password is required"))
 	}
 
 	return len(errs) == 0, errs

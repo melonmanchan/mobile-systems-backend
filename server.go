@@ -11,7 +11,6 @@ import (
 	"./middleware"
 	"./models"
 
-	"github.com/albrow/negroni-json-recovery"
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
 )
@@ -42,18 +41,11 @@ func main() {
 
 	log.Println("Migrations performed succesfully!")
 
-	// Set up JSON error response middleware
-	recovery.Formatter = func(errMsg string, stack []byte, file string, line int, fullMessages bool) interface{} {
-		return map[string]string{
-			"error": errMsg,
-		}
-	}
-
 	// These are common middleware to be used for every route
 	n := negroni.New(
 		negroni.NewLogger(),
 		middleware.SetContentType(),
-		recovery.JSONRecovery(true),
+		middleware.JSONRecovery(),
 	)
 
 	// App variable holding the database connection and configuration that we can inject into handy places!
