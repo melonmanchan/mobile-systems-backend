@@ -26,9 +26,9 @@ func AuthHandler(app app.App, r *mux.Router) {
 			panic(err)
 		}
 
-		errs := req.GetErrors()
+		valid, errs := req.IsValid()
 
-		if errs != nil {
+		if !valid {
 			w.WriteHeader(http.StatusBadRequest)
 			panic(errs)
 		}

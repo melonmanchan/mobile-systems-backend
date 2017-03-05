@@ -20,7 +20,7 @@ type LoginResponse struct {
 	CreatedAt time.Time    `json:"created_at"`
 }
 
-// GetErrors ...
-func (req LoginRequest) GetErrors() []error {
-	return nil
+// IsValid ...
+func (req LoginRequest) IsValid() (bool, []error) {
+	return true, nil
 }
