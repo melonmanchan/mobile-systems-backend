@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"./app"
 	"./config"
 	"./handlers"
 	"./middleware"
@@ -50,10 +51,12 @@ func main() {
 		recovery.JSONRecovery(true),
 	)
 
+	app := app.App{Client: *db, Config: config}
+
 	mainRouter := mux.NewRouter()
 
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
-	handlers.AuthHandler(db, authRouter)
+	handlers.AuthHandler(app, authRouter)
 
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
 	n.UseHandler(mainRouter)

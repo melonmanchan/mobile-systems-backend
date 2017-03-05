@@ -5,12 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"../models"
+	"../app"
 	"github.com/gorilla/mux"
 )
 
 // AuthHandler ...
-func AuthHandler(client *models.Client, r *mux.Router) {
+func AuthHandler(app app.App, r *mux.Router) {
+	client := app.Client
 
 	// Logging in
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
