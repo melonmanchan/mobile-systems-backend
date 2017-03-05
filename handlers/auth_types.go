@@ -31,6 +31,25 @@ type LoginResponse struct {
 	CreatedAt time.Time    `json:"created_at"`
 }
 
+// ToUser ...
+func (req RegisterRequest) ToUser() models.User {
+	user := models.User{
+		ID:                   0,
+		FirstName:            req.FirstName,
+		LastName:             req.LastName,
+		Email:                req.Email,
+		AuthenticationMethod: models.NormalAuth,
+	}
+
+	if req.UserType == "TUTOR" {
+		user.UserType = models.TutorType
+	} else if req.UserType == "TUTEE" {
+		user.UserType = models.TuteeType
+	}
+
+	return user
+}
+
 // IsValid ...
 func (req LoginRequest) IsValid() (bool, []error) {
 	var errs []error
@@ -70,7 +89,7 @@ func (req RegisterRequest) IsValid() (bool, []error) {
 		errs = append(errs, fmt.Errorf("last name is required"))
 	}
 
-	if req.UserType != "TUTEE" && req.UserType != "TUTOR" {
+	if req.UserType != models.TutorType.Type && req.UserType != models.TuteeType.Type {
 		errs = append(errs, fmt.Errorf("%s is an unknown user type", req.UserType))
 	}
 

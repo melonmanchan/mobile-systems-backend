@@ -47,8 +47,13 @@ type UserType struct {
 	Type string `json:"type" db:"type"`
 }
 
+// CreateUser ...
+func (c Client) CreateUser(user User) error {
+	return nil
+}
+
 // GetUserByEmail ...
-func (c Client) GetUserByEmail(email string) (*User, error) {
+func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
 	err := c.DB.Get(&user, `
 	SELECT users.id , users.first_name, users.last_name, users.email, users.password,
@@ -57,7 +62,7 @@ func (c Client) GetUserByEmail(email string) (*User, error) {
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
 	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
-	WHERE users.email = $1;`, email)
+	WHERE users.email = $1 AND authentication_methods.id = $2;`, email, method.ID)
 
 	if err != nil {
 		return nil, err

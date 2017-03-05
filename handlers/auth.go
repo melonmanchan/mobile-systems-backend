@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"../app"
+	"../models"
 	"../utils"
 	"github.com/gorilla/mux"
 )
@@ -18,7 +19,6 @@ func AuthHandler(app app.App, r *mux.Router) {
 	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var req RegisterRequest
-		var resp LoginResponse
 		defer r.Body.Close()
 
 		err := decoder.Decode(&req)
@@ -32,6 +32,14 @@ func AuthHandler(app app.App, r *mux.Router) {
 		if !valid {
 			w.WriteHeader(http.StatusBadRequest)
 			panic(errs)
+		}
+
+		user := req.ToUser()
+
+		err = client.CreateUser(user)
+
+		if err != nil {
+			panic(err)
 		}
 
 	}).Methods("POST")
@@ -57,7 +65,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 			panic(errs)
 		}
 
-		user, err := client.GetUserByEmail(req.Email)
+		user, err := client.GetUserByEmail(req.Email, models.NormalAuth)
 
 		if err != nil {
 			panic(err)
