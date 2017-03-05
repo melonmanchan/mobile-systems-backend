@@ -18,8 +18,9 @@ type PostgresConfig struct {
 
 // Config ...
 type Config struct {
-	PgConf    PostgresConfig
-	JWTSecret string
+	PgConf         PostgresConfig
+	JWTSecret      string
+	MigrationsPath string
 }
 
 // PostgresConfigToConnectionString ...
@@ -36,7 +37,8 @@ var defaultConf = Config{
 		Params:   "?sslmode=disable",
 		Port:     5432,
 	},
-	JWTSecret: "secret",
+	JWTSecret:      "secret",
+	MigrationsPath: "./migrations",
 }
 
 // ParseTuteeConfig ...
@@ -50,9 +52,14 @@ func ParseTuteeConfig() Config {
 	host := os.Getenv("POSTGRES_HOST")
 	params := os.Getenv("POSTGRES_PARAMS")
 	database := os.Getenv("POSTGRES_DB")
+	path := os.Getenv("MIGRATIONS_PATH")
 
 	if jwt != "" {
 		cfg.JWTSecret = jwt
+	}
+
+	if path != "" {
+		cfg.MigrationsPath = path
 	}
 
 	if username != "" {

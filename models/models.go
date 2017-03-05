@@ -19,10 +19,10 @@ type Client struct {
 }
 
 // PerformPendingMigrations ...
-func PerformPendingMigrations(pgConf config.PostgresConfig) []error {
+func PerformPendingMigrations(path string, pgConf config.PostgresConfig) []error {
 	connectionString := pgConf.PostgresConfigToConnectionString()
 
-	errors, ok := migrate.UpSync(connectionString, "./migrations")
+	errors, ok := migrate.UpSync(connectionString, path)
 
 	if !ok {
 		return errors

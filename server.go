@@ -33,7 +33,7 @@ func main() {
 
 	// Automatically migrate database models if there are any that are unapplied
 	// We use github.com/mattes/migrate
-	errs := models.PerformPendingMigrations(config.PgConf)
+	errs := models.PerformPendingMigrations(config.MigrationsPath, config.PgConf)
 
 	if errs != nil {
 		log.Fatal(errs)
