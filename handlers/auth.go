@@ -3,14 +3,17 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"../app"
+	"../utils"
 	"github.com/gorilla/mux"
 )
 
 // AuthHandler ...
 func AuthHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	config := app.Config
 
 	// Logging in
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +42,18 @@ func AuthHandler(app app.App, r *mux.Router) {
 			panic(err)
 		}
 
-		encoded, err := json.Marshal(user)
+		token, expiresAt, err := utils.CreateUserToken(*user, config)
+
+		if err != nil {
+			panic(err)
+		}
+
+		resp.ExpiresAt = expiresAt
+		resp.CreatedAt = time.Now()
+		resp.Token = token
+		resp.User = user
+
+		encoded, err := json.Marshal(resp)
 		w.Write(encoded)
 	}).Methods("POST")
 }

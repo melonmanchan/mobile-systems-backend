@@ -1,14 +1,16 @@
 package handlers
 
 import (
+	"fmt"
 	"time"
 
 	"../models"
+	v "../validators"
 )
 
 // LoginRequest ...
 type LoginRequest struct {
-	Email    string `json:"username"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
@@ -22,5 +24,17 @@ type LoginResponse struct {
 
 // IsValid ...
 func (req LoginRequest) IsValid() (bool, []error) {
-	return true, nil
+	var errs []error
+
+	if req.Email == "" {
+		errs = append(errs, fmt.Errorf("Email address is required!"))
+	} else if !v.IsEmail(req.Email) {
+		errs = append(errs, fmt.Errorf("%s is not a valid email address!", req.Email))
+	}
+
+	if req.Password == "" {
+		errs = append(errs, fmt.Errorf("Password is required!"))
+	}
+
+	return len(errs) == 0, errs
 }
