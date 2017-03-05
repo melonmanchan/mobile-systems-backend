@@ -1,6 +1,9 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"database/sql/driver"
+)
 
 var (
 	TutorType = UserType{
@@ -47,8 +50,28 @@ type UserType struct {
 	Type string `json:"type" db:"type"`
 }
 
+func (t UserType) Value() (driver.Value, error) {
+	return int64(t.ID), nil
+}
+
+func (t AuthenticationMethod) Value() (driver.Value, error) {
+	return int64(t.ID), nil
+}
+
 // CreateUser ...
-func (c Client) CreateUser(user User) error {
+func (c Client) CreateUser(user *User) error {
+	res, err := c.DB.NamedExec(`
+	INSERT INTO users (first_name, last_name, email, password, user_type, auth_method)
+	VALUES(:first_name, :last_name, :email, :password, :user_type, :auth_method)
+	`, user)
+
+	if err != nil {
+		return err
+	}
+
+	id, _ := res.LastInsertId()
+	user.ID = id
+
 	return nil
 }
 

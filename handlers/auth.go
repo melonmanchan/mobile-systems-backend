@@ -19,6 +19,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var req RegisterRequest
+		var resp LoginResponse
 		defer r.Body.Close()
 
 		err := decoder.Decode(&req)
@@ -36,12 +37,25 @@ func AuthHandler(app app.App, r *mux.Router) {
 
 		user := req.ToUser()
 
-		err = client.CreateUser(user)
+		err = client.CreateUser(&user)
 
 		if err != nil {
 			panic(err)
 		}
 
+		token, expiresAt, err := utils.CreateUserToken(user, config)
+
+		if err != nil {
+			panic(err)
+		}
+
+		resp.ExpiresAt = expiresAt
+		resp.CreatedAt = time.Now()
+		resp.Token = token
+		resp.User = &user
+
+		encoded, err := json.Marshal(resp)
+		w.Write(encoded)
 	}).Methods("POST")
 
 	// Logging in
