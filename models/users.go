@@ -2,6 +2,28 @@ package models
 
 import "database/sql"
 
+var (
+	TutorType = UserType{
+		ID:   1,
+		Type: "TUTOR",
+	}
+
+	TuteeType = UserType{
+		ID:   2,
+		Type: "TUTEE",
+	}
+
+	NormalAuth = AuthenticationMethod{
+		ID:   1,
+		Type: "BASIC",
+	}
+
+	GoogleAuth = AuthenticationMethod{
+		ID:   2,
+		Type: "GOOGLE_OAUTH",
+	}
+)
+
 // User ...
 type User struct {
 	ID                   int64                `json:"-" db:"id"`

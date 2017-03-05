@@ -15,6 +15,27 @@ func AuthHandler(app app.App, r *mux.Router) {
 	client := app.Client
 	config := app.Config
 
+	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var req RegisterRequest
+		var resp LoginResponse
+		defer r.Body.Close()
+
+		err := decoder.Decode(&req)
+
+		if err != nil {
+			panic(err)
+		}
+
+		valid, errs := req.IsValid()
+
+		if !valid {
+			w.WriteHeader(http.StatusBadRequest)
+			panic(errs)
+		}
+
+	}).Methods("POST")
+
 	// Logging in
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
