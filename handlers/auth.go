@@ -23,6 +23,5 @@ func AuthHandler(client *models.Client, r *mux.Router) {
 		log.Println(user.ID)
 		encoded, err := json.Marshal(user)
 		w.Write(encoded)
-	})
-
+	}).Methods("POST")
 }

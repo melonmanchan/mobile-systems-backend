@@ -55,6 +55,7 @@ func main() {
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
 	handlers.AuthHandler(db, authRouter)
 
+	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
 	n.UseHandler(mainRouter)
 
 	server := &http.Server{
