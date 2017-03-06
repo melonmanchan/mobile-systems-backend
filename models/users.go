@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -60,6 +62,17 @@ func (t AuthenticationMethod) Value() (driver.Value, error) {
 
 // CreateUser ...
 func (c Client) CreateUser(user *User) error {
+
+	if user.Password.Valid {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password.String), bcrypt.DefaultCost)
+
+		if err != nil {
+			return err
+		}
+
+		user.Password.String = string(hashedPassword)
+	}
+
 	res, err := c.DB.NamedExec(`
 	INSERT INTO users (first_name, last_name, email, password, user_type, auth_method)
 	VALUES(:first_name, :last_name, :email, :password, :user_type, :auth_method)
