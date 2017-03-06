@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
+	"errors"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -58,6 +59,15 @@ func (t UserType) Value() (driver.Value, error) {
 
 func (t AuthenticationMethod) Value() (driver.Value, error) {
 	return int64(t.ID), nil
+}
+
+// IsPasswordValid ...
+func (u User) IsPasswordValid(password string) error {
+	if !u.Password.Valid {
+		return errors.New("User password is nil")
+	}
+
+	return bcrypt.CompareHashAndPassword([]byte(u.Password.String), []byte(password))
 }
 
 // CreateUser ...

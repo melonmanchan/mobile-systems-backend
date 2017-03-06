@@ -85,6 +85,13 @@ func AuthHandler(app app.App, r *mux.Router) {
 			panic(err)
 		}
 
+		err = user.IsPasswordValid(req.Password)
+
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			panic(err)
+		}
+
 		token, expiresAt, err := utils.CreateUserToken(*user, config)
 
 		if err != nil {
