@@ -23,10 +23,11 @@ func JSONRecovery() negroni.HandlerFunc {
 			if err := recover(); err != nil {
 				var errorMessages []string
 
-				if e, ok := err.(error); ok {
+				switch e := err.(type) {
+				case error:
 					errorMessages = append(errorMessages, e.Error())
-				} else if errs, ok := err.([]error); ok {
-					for _, e := range errs {
+				case []error:
+					for _, e := range e {
 						errorMessages = append(errorMessages, e.Error())
 					}
 				}
