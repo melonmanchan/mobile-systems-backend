@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"../handlers"
+
 	"github.com/urfave/negroni"
 )
 
@@ -32,11 +34,8 @@ func JSONRecovery() negroni.HandlerFunc {
 					}
 				}
 
-				errMap := map[string][]string{
-					"errors": errorMessages,
-				}
-
-				errJSON, _ := json.Marshal(errMap)
+				resp := handlers.APIResponse{Errors: errorMessages}
+				errJSON, _ := json.Marshal(resp)
 
 				rw.Write(errJSON)
 			}

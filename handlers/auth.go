@@ -54,8 +54,10 @@ func AuthHandler(app app.App, r *mux.Router) {
 		resp.Token = token
 		resp.User = &user
 
-		encoded, err := json.Marshal(resp)
+		APIResp := APIResponse{Result: resp}
+		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
+
 	}).Methods("POST")
 
 	// Logging in
@@ -103,7 +105,8 @@ func AuthHandler(app app.App, r *mux.Router) {
 		resp.Token = token
 		resp.User = user
 
-		encoded, err := json.Marshal(resp)
+		APIResp := APIResponse{Result: resp}
+		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("POST")
 }
