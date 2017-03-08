@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
 	"../app"
 	"../models"
+	"../types"
 	"../utils"
 	"github.com/gorilla/mux"
 )
@@ -18,8 +20,9 @@ func AuthHandler(app app.App, r *mux.Router) {
 
 	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
-		var req RegisterRequest
-		var resp LoginResponse
+		var req types.RegisterRequest
+		var resp types.LoginResponse
+
 		defer r.Body.Close()
 
 		err := decoder.Decode(&req)
@@ -31,8 +34,8 @@ func AuthHandler(app app.App, r *mux.Router) {
 		valid, errs := req.IsValid()
 
 		if !valid {
-			w.WriteHeader(http.StatusBadRequest)
-			panic(errs)
+			utils.FailResponse(w, errs, http.StatusBadRequest)
+			return
 		}
 
 		user := req.ToUser()
@@ -40,13 +43,15 @@ func AuthHandler(app app.App, r *mux.Router) {
 		err = client.CreateUser(&user)
 
 		if err != nil {
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("Error creating user")}, http.StatusInternalServerError)
+			return
 		}
 
 		token, expiresAt, err := utils.CreateUserToken(user, config)
 
 		if err != nil {
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("Error creating token")}, http.StatusInternalServerError)
+			return
 		}
 
 		resp.ExpiresAt = expiresAt
@@ -54,7 +59,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 		resp.Token = token
 		resp.User = &user
 
-		APIResp := APIResponse{Result: resp}
+		APIResp := types.APIResponse{Result: resp, Status: 201}
 		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 
@@ -63,41 +68,44 @@ func AuthHandler(app app.App, r *mux.Router) {
 	// Logging in
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
-		var req LoginRequest
-		var resp LoginResponse
+		var req types.LoginRequest
+		var resp types.LoginResponse
 
 		defer r.Body.Close()
 
 		err := decoder.Decode(&req)
 
 		if err != nil {
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("Error reading request")}, http.StatusBadRequest)
+			return
 		}
 
 		valid, errs := req.IsValid()
 
 		if !valid {
-			w.WriteHeader(http.StatusBadRequest)
-			panic(errs)
+			utils.FailResponse(w, errs, http.StatusBadRequest)
+			return
 		}
 
 		user, err := client.GetUserByEmail(req.Email, models.NormalAuth)
 
 		if err != nil {
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("User not found")}, http.StatusNotFound)
+			return
 		}
 
 		err = user.IsPasswordValid(req.Password)
 
 		if err != nil {
-			w.WriteHeader(http.StatusForbidden)
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("Password was wrong")}, http.StatusForbidden)
+			return
 		}
 
 		token, expiresAt, err := utils.CreateUserToken(*user, config)
 
 		if err != nil {
-			panic(err)
+			utils.FailResponse(w, []error{errors.New("Error creating token")}, http.StatusInternalServerError)
+			return
 		}
 
 		resp.ExpiresAt = expiresAt
@@ -105,7 +113,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 		resp.Token = token
 		resp.User = user
 
-		APIResp := APIResponse{Result: resp}
+		APIResp := types.APIResponse{Result: resp, Status: 200}
 		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("POST")

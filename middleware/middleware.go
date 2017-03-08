@@ -1,11 +1,10 @@
 package middleware
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"../handlers"
+	"../utils"
 
 	"github.com/urfave/negroni"
 )
@@ -23,21 +22,16 @@ func JSONRecovery() negroni.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		defer func() {
 			if err := recover(); err != nil {
-				var errorMessages []string
+				var errs []error
 
 				switch e := err.(type) {
 				case error:
-					errorMessages = append(errorMessages, e.Error())
+					errs = append(errs, e)
 				case []error:
-					for _, e := range e {
-						errorMessages = append(errorMessages, e.Error())
-					}
+					errs = e
 				}
 
-				resp := handlers.APIResponse{Errors: errorMessages}
-				errJSON, _ := json.Marshal(resp)
-
-				rw.Write(errJSON)
+				utils.FailResponse(rw, errs, http.StatusInternalServerError)
 			}
 		}()
 		next(rw, r)
