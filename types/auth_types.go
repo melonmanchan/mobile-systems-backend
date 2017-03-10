@@ -24,6 +24,12 @@ type RegisterRequest struct {
 	UserType  string `json:"user_type"`
 }
 
+// RegisterTutorExtraRequest ...
+type RegisterTutorExtraRequest struct {
+	RegisterRequest
+	Description string `json:"description"`
+}
+
 // LoginResponse ...
 type LoginResponse struct {
 	User      *models.User `json:"user"`
@@ -95,6 +101,25 @@ func (req RegisterRequest) IsValid() (bool, []error) {
 		errs = append(errs, fmt.Errorf("usertype is required"))
 	} else if req.UserType != models.TutorType.Type && req.UserType != models.TuteeType.Type {
 		errs = append(errs, fmt.Errorf("%s is an unknown user type", req.UserType))
+	}
+
+	return len(errs) == 0, errs
+}
+
+// IsValid ...
+func (req RegisterTutorExtraRequest) IsValid() (bool, []error) {
+	registerReq := RegisterRequest{
+		Email:     req.Email,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Password:  req.Password,
+		UserType:  req.UserType,
+	}
+
+	_, errs := registerReq.IsValid()
+
+	if req.Description == "" {
+		errs = append(errs, fmt.Errorf("description is required"))
 	}
 
 	return len(errs) == 0, errs
