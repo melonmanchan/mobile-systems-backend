@@ -17,16 +17,11 @@ type LoginRequest struct {
 
 // RegisterRequest ...
 type RegisterRequest struct {
-	Email     string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"password"`
-	UserType  string `json:"user_type"`
-}
-
-// RegisterTutorExtraRequest ...
-type RegisterTutorExtraRequest struct {
-	RegisterRequest
+	Email       string `json:"email"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Password    string `json:"password"`
+	UserType    string `json:"user_type"`
 	Description string `json:"description"`
 }
 
@@ -46,6 +41,7 @@ func (req RegisterRequest) ToUser() models.User {
 		LastName:             req.LastName,
 		Email:                req.Email,
 		Password:             sql.NullString{String: req.Password, Valid: true},
+		Description:          req.Description,
 		AuthenticationMethod: models.NormalAuth,
 	}
 
@@ -103,23 +99,8 @@ func (req RegisterRequest) IsValid() (bool, []error) {
 		errs = append(errs, fmt.Errorf("%s is an unknown user type", req.UserType))
 	}
 
-	return len(errs) == 0, errs
-}
-
-// IsValid ...
-func (req RegisterTutorExtraRequest) IsValid() (bool, []error) {
-	registerReq := RegisterRequest{
-		Email:     req.Email,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Password:  req.Password,
-		UserType:  req.UserType,
-	}
-
-	_, errs := registerReq.IsValid()
-
-	if req.Description == "" {
-		errs = append(errs, fmt.Errorf("description is required"))
+	if req.Description == "" && req.UserType == models.TutorType.Type {
+		errs = append(errs, fmt.Errorf("tutors must have description"))
 	}
 
 	return len(errs) == 0, errs
