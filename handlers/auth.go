@@ -43,7 +43,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 		err = client.CreateUser(&user)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("Error creating user")}, http.StatusInternalServerError)
+			utils.FailResponse(w, []error{errors.New("User already exists user")}, http.StatusInternalServerError)
 			return
 		}
 

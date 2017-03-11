@@ -17,12 +17,11 @@ type LoginRequest struct {
 
 // RegisterRequest ...
 type RegisterRequest struct {
-	Email       string `json:"email"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Password    string `json:"password"`
-	UserType    string `json:"user_type"`
-	Description string `json:"description"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Password  string `json:"password"`
+	UserType  string `json:"user_type"`
 }
 
 // LoginResponse ...
@@ -41,7 +40,7 @@ func (req RegisterRequest) ToUser() models.User {
 		LastName:             req.LastName,
 		Email:                req.Email,
 		Password:             sql.NullString{String: req.Password, Valid: true},
-		Description:          req.Description,
+		Description:          "",
 		AuthenticationMethod: models.NormalAuth,
 	}
 
@@ -97,10 +96,6 @@ func (req RegisterRequest) IsValid() (bool, []error) {
 		errs = append(errs, fmt.Errorf("usertype is required"))
 	} else if req.UserType != models.TutorType.Type && req.UserType != models.TuteeType.Type {
 		errs = append(errs, fmt.Errorf("%s is an unknown user type", req.UserType))
-	}
-
-	if req.Description == "" && req.UserType == models.TutorType.Type {
-		errs = append(errs, fmt.Errorf("tutors must have description"))
 	}
 
 	return len(errs) == 0, errs
