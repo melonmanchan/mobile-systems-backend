@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
@@ -43,14 +42,14 @@ func AuthHandler(app app.App, r *mux.Router) {
 		err = client.CreateUser(&user)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("User already exists user")}, http.StatusInternalServerError)
+			utils.FailResponse(w, []types.APIError{types.ErrorRegisterAlreadyExists}, http.StatusInternalServerError)
 			return
 		}
 
 		token, expiresAt, err := utils.CreateUserToken(user, config)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("Error creating token")}, http.StatusInternalServerError)
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericTokenCreate}, http.StatusInternalServerError)
 			return
 		}
 
@@ -76,7 +75,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 		err := decoder.Decode(&req)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("Error reading request")}, http.StatusBadRequest)
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
 
@@ -90,21 +89,21 @@ func AuthHandler(app app.App, r *mux.Router) {
 		user, err := client.GetUserByEmail(req.Email, models.NormalAuth)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("User not found")}, http.StatusNotFound)
+			utils.FailResponse(w, []types.APIError{types.ErrorLoginUserNotFound}, http.StatusBadRequest)
 			return
 		}
 
 		err = user.IsPasswordValid(req.Password)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("Password was wrong")}, http.StatusForbidden)
+			utils.FailResponse(w, []types.APIError{types.ErrorLoginWrongPassword}, http.StatusBadRequest)
 			return
 		}
 
 		token, expiresAt, err := utils.CreateUserToken(*user, config)
 
 		if err != nil {
-			utils.FailResponse(w, []error{errors.New("Error creating token")}, http.StatusInternalServerError)
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericTokenCreate}, http.StatusBadRequest)
 			return
 		}
 

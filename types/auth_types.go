@@ -54,48 +54,48 @@ func (req RegisterRequest) ToUser() models.User {
 }
 
 // IsValid ...
-func (req LoginRequest) IsValid() (bool, []error) {
-	var errs []error
+func (req LoginRequest) IsValid() (bool, []APIError) {
+	var errs []APIError
 
 	if req.Email == "" {
-		errs = append(errs, fmt.Errorf("email address is required"))
+		errs = append(errs, RequiredError("Email is required"))
 	} else if !v.IsEmail(req.Email) {
-		errs = append(errs, fmt.Errorf("%s is not a valid email address", req.Email))
+		errs = append(errs, FormatError(fmt.Sprintf("%s is not a valid email address", req.Email)))
 	}
 
 	if req.Password == "" {
-		errs = append(errs, fmt.Errorf("password is required"))
+		errs = append(errs, RequiredError("Password is required"))
 	}
 
 	return len(errs) == 0, errs
 }
 
 // IsValid ...
-func (req RegisterRequest) IsValid() (bool, []error) {
-	var errs []error
+func (req RegisterRequest) IsValid() (bool, []APIError) {
+	var errs []APIError
 
 	if req.Email == "" {
-		errs = append(errs, fmt.Errorf("email address is required"))
+		errs = append(errs, RequiredError("Email is required"))
 	} else if !v.IsEmail(req.Email) {
-		errs = append(errs, fmt.Errorf("%s is not a valid email address", req.Email))
+		errs = append(errs, FormatError(fmt.Sprintf("%s is not a valid email address", req.Email)))
 	}
 
 	if req.Password == "" {
-		errs = append(errs, fmt.Errorf("password is required"))
+		errs = append(errs, RequiredError("Password is required"))
 	}
 
 	if req.FirstName == "" {
-		errs = append(errs, fmt.Errorf("first name is required"))
+		errs = append(errs, RequiredError("First name is required"))
 	}
 
 	if req.LastName == "" {
-		errs = append(errs, fmt.Errorf("last name is required"))
+		errs = append(errs, RequiredError("Last name is required"))
 	}
 
 	if req.UserType == "" {
-		errs = append(errs, fmt.Errorf("usertype is required"))
+		errs = append(errs, RequiredError("User type is required"))
 	} else if req.UserType != models.TutorType.Type && req.UserType != models.TuteeType.Type {
-		errs = append(errs, fmt.Errorf("%s is an unknown user type", req.UserType))
+		errs = append(errs, FormatError(fmt.Sprintf("%s is an unknown user type", req.UserType)))
 	}
 
 	return len(errs) == 0, errs
