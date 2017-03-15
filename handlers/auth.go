@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -93,8 +92,6 @@ func AuthHandler(app app.App, r *mux.Router) {
 			utils.FailResponse(w, []types.APIError{types.ErrorLoginUserNotFound}, http.StatusBadRequest)
 			return
 		}
-
-		log.Print(user.DeviceTokens)
 
 		err = user.IsPasswordValid(req.Password)
 
