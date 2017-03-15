@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"../app"
@@ -37,9 +36,18 @@ func UserHandler(app app.App, r *mux.Router) {
 			return
 		}
 
-		err = client.AddTokenToUser(user, req.Token)
+		deviceAlreadyRegistered := false
 
-		log.Print(err)
+		for _, token := range user.DeviceTokens {
+			if token == req.Token {
+				deviceAlreadyRegistered = true
+				break
+			}
+		}
+
+		if deviceAlreadyRegistered == false {
+			err = client.AddTokenToUser(user, req.Token)
+		}
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strings"
 
@@ -14,6 +15,7 @@ import (
 
 // CreateResolveUser ...
 func CreateResolveUser(app app.App) func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	client := app.Client
 	config := app.Config
 
 	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
@@ -33,7 +35,18 @@ func CreateResolveUser(app app.App) func(rw http.ResponseWriter, r *http.Request
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), types.UserKey, user)
+		log.Println(user.Email)
+		log.Println(user.AuthenticationMethod)
+
+		fullUser, err := client.GetUserByEmail(user.Email, user.AuthenticationMethod)
+
+		if err != nil {
+			log.Print(err)
+			utils.FailResponse(rw, []types.APIError{types.ErrorLoginUserNotFound}, http.StatusForbidden)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), types.UserKey, fullUser)
 		r = r.WithContext(ctx)
 
 		next(rw, r)

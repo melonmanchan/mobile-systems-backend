@@ -121,6 +121,14 @@ func (c Client) CreateUser(user *User) error {
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
+
+	// ID might not persist in JWT, resolve it this way
+	if method.Type == NormalAuth.Type {
+		method.ID = NormalAuth.ID
+	} else if method.Type == GoogleAuth.Type {
+		method.ID = GoogleAuth.ID
+	}
+
 	err := c.DB.Get(&user, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.device_tokens,
 	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
