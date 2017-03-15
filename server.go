@@ -54,7 +54,6 @@ func main() {
 	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()
 
-	//authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
 	authRouter := mux.NewRouter().PathPrefix("/auth").Subrouter().StrictSlash(true)
 
 	handlers.AuthHandler(app, authRouter)
