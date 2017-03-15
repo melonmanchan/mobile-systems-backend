@@ -24,7 +24,7 @@ func CreateResolveUser(app app.App) func(rw http.ResponseWriter, r *http.Request
 			return
 		}
 
-		tokenSansBearer := strings.TrimPrefix("Bearer ", token)
+		tokenSansBearer := strings.TrimPrefix(token, "Bearer ")
 
 		user, err := utils.DecodeUserFromJWT(tokenSansBearer, config)
 
