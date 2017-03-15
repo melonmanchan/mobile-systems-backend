@@ -55,9 +55,22 @@ func main() {
 	mainRouter := mux.NewRouter()
 
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
+
 	handlers.AuthHandler(app, authRouter)
 
+	userRouter := mux.NewRouter().PathPrefix("/user").Subrouter().StrictSlash(true)
+
+	//userRouter := mainRouter.PathPrefix("/user").Subrouter().StrictSlash(true)
+
+	handlers.UserHandler(app, userRouter)
+
+	mainRouter.PathPrefix("/user").Handler(n.With(
+		negroni.HandlerFunc(middleware.ResolveUser),
+		negroni.Wrap(userRouter),
+	))
+
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
+
 	n.UseHandler(mainRouter)
 
 	server := &http.Server{

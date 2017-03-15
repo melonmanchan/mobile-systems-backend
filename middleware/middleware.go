@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 
 	"../types"
@@ -8,6 +9,12 @@ import (
 
 	"github.com/urfave/negroni"
 )
+
+// ResolveUser ...
+func ResolveUser(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	log.Printf("Resolve user")
+	next(rw, r)
+}
 
 // SetContentType ...
 func SetContentType() negroni.HandlerFunc {
