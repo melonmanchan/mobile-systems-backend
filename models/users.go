@@ -72,6 +72,21 @@ func (u User) IsPasswordValid(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(u.Password.String), []byte(password))
 }
 
+// AddTokenToUser ...
+func (c Client) AddTokenToUser(user *User, token string) error {
+	tx := c.DB.MustBegin()
+
+	tx.MustExec(`
+		UPDATE users
+		SET device_tokens = array_append(device_tokens, $1)
+		WHERE users.id = $2;
+	`, token, user.ID)
+
+	err := tx.Commit()
+
+	return err
+}
+
 // CreateUser ...
 func (c Client) CreateUser(user *User) error {
 
