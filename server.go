@@ -54,13 +54,16 @@ func main() {
 	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()
 
-	authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
+	//authRouter := mainRouter.PathPrefix("/auth").Subrouter().StrictSlash(true)
+	authRouter := mux.NewRouter().PathPrefix("/auth").Subrouter().StrictSlash(true)
 
 	handlers.AuthHandler(app, authRouter)
 
-	userRouter := mux.NewRouter().PathPrefix("/user").Subrouter().StrictSlash(true)
+	mainRouter.PathPrefix("/auth").Handler(n.With(
+		negroni.Wrap(authRouter),
+	))
 
-	//userRouter := mainRouter.PathPrefix("/user").Subrouter().StrictSlash(true)
+	userRouter := mux.NewRouter().PathPrefix("/user").Subrouter().StrictSlash(true)
 
 	handlers.UserHandler(app, userRouter)
 
