@@ -67,7 +67,7 @@ func main() {
 	handlers.UserHandler(app, userRouter)
 
 	mainRouter.PathPrefix("/user").Handler(n.With(
-		negroni.HandlerFunc(middleware.ResolveUser),
+		negroni.HandlerFunc(middleware.CreateResolveUser(app)),
 		negroni.Wrap(userRouter),
 	))
 

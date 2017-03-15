@@ -32,6 +32,16 @@ var (
 		Code:    "ERROR_GENERIC_TOKEN_CREATE",
 	}
 
+	ErrorGenericTokenMissing = APIError{
+		Message: "Authentication token missing",
+		Code:    "ERROR_GENERIC_TOKEN_MISSING",
+	}
+
+	ErrorGenericTokenInvalid = APIError{
+		Message: "Authentication token is invalid",
+		Code:    "ERROR_GENERIC_TOKEN_INVALID",
+	}
+
 	ErrorGenericServer = APIError{
 		Message: "Something went wrong!",
 		Code:    "ERROR_GENERIC_SERVER",

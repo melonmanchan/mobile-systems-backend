@@ -1,19 +1,43 @@
 package middleware
 
 import (
-	"log"
+	"context"
 	"net/http"
+	"strings"
 
+	"../app"
 	"../types"
 	"../utils"
 
 	"github.com/urfave/negroni"
 )
 
-// ResolveUser ...
-func ResolveUser(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	log.Printf("Resolve user")
-	next(rw, r)
+// CreateResolveUser ...
+func CreateResolveUser(app app.App) func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	config := app.Config
+
+	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		token := r.Header.Get("Authorization")
+
+		if token == "" {
+			utils.FailResponse(rw, []types.APIError{types.ErrorGenericTokenMissing}, http.StatusForbidden)
+			return
+		}
+
+		tokenSansBearer := strings.TrimPrefix("Bearer ", token)
+
+		user, err := utils.DecodeUserFromJWT(tokenSansBearer, config)
+
+		if err != nil {
+			utils.FailResponse(rw, []types.APIError{types.ErrorGenericTokenInvalid}, http.StatusForbidden)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), types.UserKey, user)
+		r = r.WithContext(ctx)
+
+		next(rw, r)
+	}
 }
 
 // SetContentType ...
