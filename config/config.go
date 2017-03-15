@@ -18,9 +18,10 @@ type PostgresConfig struct {
 
 // Config ...
 type Config struct {
-	PgConf         PostgresConfig
-	JWTSecret      string
-	MigrationsPath string
+	PgConf            PostgresConfig
+	JWTSecret         string
+	FirebaseServerKey string
+	MigrationsPath    string
 }
 
 // PostgresConfigToConnectionString ...
@@ -37,8 +38,9 @@ var defaultConf = Config{
 		Params:   "?sslmode=disable",
 		Port:     5432,
 	},
-	JWTSecret:      "secret",
-	MigrationsPath: "./migrations",
+	JWTSecret:         "secret",
+	FirebaseServerKey: "",
+	MigrationsPath:    "./migrations",
 }
 
 // ParseTuteeConfig ...
@@ -46,6 +48,7 @@ func ParseTuteeConfig() Config {
 	cfg := defaultConf
 
 	jwt := os.Getenv("JWT_SECRET")
+	firebase := os.Getenv("FIREBASE_SERVER_KEY")
 	username := os.Getenv("POSTGRES_USER")
 	port := os.Getenv("POSTGRES_PORT")
 	password := os.Getenv("POSTGRES_PASSWORD")
@@ -56,6 +59,10 @@ func ParseTuteeConfig() Config {
 
 	if jwt != "" {
 		cfg.JWTSecret = jwt
+	}
+
+	if firebase != "" {
+		cfg.FirebaseServerKey = firebase
 	}
 
 	if path != "" {
