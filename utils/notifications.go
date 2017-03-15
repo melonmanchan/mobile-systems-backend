@@ -1,30 +1,21 @@
 package utils
 
 import (
-	"log"
-
 	"../config"
-	"github.com/NaySoftware/go-fcm"
+	"github.com/maddevsio/fcm"
 )
 
 // SendNotification ...
-func SendNotification(cfg config.Config, device string, payload fcm.NotificationPayload) error {
-	data := map[string]string{
-		"msg": "Hello World1",
-	}
+func SendNotification(cfg config.Config, devices []string, payload fcm.Notification) error {
 
-	log.Println(cfg.FirebaseServerKey)
-	log.Println(device)
+	c := fcm.NewFCM(cfg.FirebaseServerKey)
 
-	c := fcm.NewFcmClient(cfg.FirebaseServerKey)
-
-	c.SetPriority(fcm.Priority_HIGH)
-
-	c.SetNotificationPayload(&payload)
-
-	c.NewFcmMsgTo(device, data)
-
-	_, err := c.Send()
+	_, err := c.Send(fcm.Message{
+		RegistrationIDs:  devices,
+		ContentAvailable: true,
+		Priority:         fcm.PriorityHigh,
+		Notification:     payload,
+	})
 
 	return err
 }

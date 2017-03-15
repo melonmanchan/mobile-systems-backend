@@ -14,6 +14,7 @@ import (
 // UserHandler ...
 func UserHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	config := app.Config
 
 	r.HandleFunc("/register_device", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
@@ -53,6 +54,11 @@ func UserHandler(app app.App, r *mux.Router) {
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
+
+		//utils.SendNotification(config, user.DeviceTokens, fcm.Notification{
+		//Title: "Hello",
+		//Body:  "World",
+		//})
 
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)
