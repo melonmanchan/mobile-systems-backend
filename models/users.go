@@ -38,6 +38,7 @@ type User struct {
 	Email                string               `json:"email" db:"email"`
 	Description          string               `json:"description" db:"description"`
 	Password             sql.NullString       `json:"-" db:"password"`
+	DeviceTokens         []string             `json:"-" db:"device_tokens"`
 	UserType             UserType             `json:"user_type" db:"user_type"`
 	AuthenticationMethod AuthenticationMethod `json:"auth_method"  db:"auth_method"`
 }
@@ -85,8 +86,8 @@ func (c Client) CreateUser(user *User) error {
 	}
 
 	res, err := c.DB.NamedExec(`
-	INSERT INTO users (first_name, last_name, email, password, description, user_type, auth_method)
-	VALUES(:first_name, :last_name, :email, :password, :description, :user_type, :auth_method)
+	INSERT INTO users (first_name, last_name, email, password, description, user_type, auth_method, device_tokens)
+	VALUES(:first_name, :last_name, :email, :password, :description, :user_type, :auth_method, :device_tokens)
 	`, user)
 
 	if err != nil {
@@ -103,7 +104,8 @@ func (c Client) CreateUser(user *User) error {
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
 	err := c.DB.Get(&user, `
-	SELECT users.id , users.first_name, users.last_name, users.email, users.password, users.description,
+	SELECT users.id, users.first_name, users.last_name, users.email, users.password,
+	users.description, users.device_tokens,
 	user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
