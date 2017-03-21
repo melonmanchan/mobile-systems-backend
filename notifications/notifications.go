@@ -44,10 +44,10 @@ func (f Firebase) sendEvent(devices []string, data map[string]string) error {
 }
 
 // SendGeneralMessage ...
-func (f Firebase) SendGeneralMessage(message types.GeneralMessage, devices []string) error {
+func (f Firebase) SendGeneralMessage(devices []string, message types.GeneralMessage) error {
 	encoded, err := json.Marshal(message)
 
-	if err != nil {
+	if err == nil {
 		data := make(map[string]string)
 		data["type"] = "general"
 		data["payload"] = string(encoded)

@@ -9,7 +9,6 @@ import (
 	"../types"
 	"../utils"
 	"github.com/gorilla/mux"
-	"github.com/maddevsio/fcm"
 )
 
 // UserHandler ...
@@ -55,11 +54,6 @@ func UserHandler(app app.App, r *mux.Router) {
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
-
-		firebase.SendNotification(user.DeviceTokens, fcm.Notification{
-			Title: "Hello",
-			Body:  "World",
-		})
 
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)
