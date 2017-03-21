@@ -10,6 +10,7 @@ import (
 	"./handlers"
 	"./middleware"
 	"./models"
+	"./notifications"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -22,6 +23,8 @@ func main() {
 
 	// Attempt to fetch a database connection
 	db, err := models.ConnectToDatabase(config.PgConf)
+
+	fb := notifications.BuildFirebaseClient(config)
 
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +52,7 @@ func main() {
 	)
 
 	// App variable holding the database connection and configuration that we can inject into handy places!
-	app := app.App{Client: *db, Config: config}
+	app := app.App{Client: *db, Config: config, Firebase: fb}
 
 	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()

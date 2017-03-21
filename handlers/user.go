@@ -9,11 +9,13 @@ import (
 	"../types"
 	"../utils"
 	"github.com/gorilla/mux"
+	"github.com/maddevsio/fcm"
 )
 
 // UserHandler ...
 func UserHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	firebase := app.Firebase
 
 	r.HandleFunc("/register_device", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
@@ -54,10 +56,10 @@ func UserHandler(app app.App, r *mux.Router) {
 			return
 		}
 
-		//utils.SendNotification(config, user.DeviceTokens, fcm.Notification{
-		//Title: "Hello",
-		//Body:  "World",
-		//})
+		firebase.SendNotification(user.DeviceTokens, fcm.Notification{
+			Title: "Hello",
+			Body:  "World",
+		})
 
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)

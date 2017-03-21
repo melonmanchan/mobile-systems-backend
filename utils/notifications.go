@@ -10,7 +10,6 @@ import (
 
 // SendNotification ...
 func SendNotification(cfg config.Config, devices []string, payload fcm.Notification) error {
-
 	c := fcm.NewFCM(cfg.FirebaseServerKey)
 
 	_, err := c.Send(fcm.Message{
