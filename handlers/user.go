@@ -61,7 +61,6 @@ func UserHandler(app app.App, r *mux.Router) {
 
 	r.HandleFunc("/update_profile", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
-		
 		decoder := json.NewDecoder(r.Body)
 
 		var req types.UpdateUserRequest

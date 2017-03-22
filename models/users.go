@@ -145,21 +145,17 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 	return &user, nil
 }
 
+// UpdateUserProfile ...
 func (c Client) UpdateUserProfile(user *User) error {
 	if user.ID == 0 {
-		return errors.New("User is not valid!")
+		return errors.New("user id is not valid")
 	}
 
-	tx := c.DB.MustBegin()
-
-	tx.MustExec(`
+	_, err := c.DB.NamedExec(`
 		UPDATE users
-		SET first_name, last_name = VALUES(:first_name, :last_name)
+		SET first_name = :first_name, last_name = :last_name
 		WHERE users.id = :id;
 	`, user)
 
-	err := tx.Commit()
-
 	return err
-
 }

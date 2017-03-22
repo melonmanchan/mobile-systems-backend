@@ -66,6 +66,7 @@ func JSONRecovery() negroni.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		defer func() {
 			if err := recover(); err != nil {
+				log.Println(err)
 				utils.FailResponse(rw, []types.APIError{types.ErrorGenericServer}, http.StatusInternalServerError)
 			}
 		}()
