@@ -31,7 +31,7 @@ func (cfg PostgresConfig) PostgresConfigToConnectionString() string {
 
 var defaultConf = Config{
 	PgConf: PostgresConfig{
-		Username: "mat",
+		Username: "emmilinkola",
 		Database: "tutee",
 		Password: "",
 		Host:     "localhost",

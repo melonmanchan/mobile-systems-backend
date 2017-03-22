@@ -58,4 +58,34 @@ func UserHandler(app app.App, r *mux.Router) {
 		encoded, _ := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("POST")
+
+	r.HandleFunc("/update_profile", func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(types.UserKey).(*models.User)
+		
+		decoder := json.NewDecoder(r.Body)
+
+		var req types.UpdateUserRequest
+		defer r.Body.Close()
+
+		err := decoder.Decode(&req)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
+			return
+		}
+
+		newUser := req.User
+		newUser.ID = user.ID
+
+		err = client.UpdateUserProfile(&newUser)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorUpdateProfileFailed}, http.StatusBadRequest)
+			return
+		}
+
+		APIResp := types.APIResponse{Result: newUser, Status: 200}
+		encoded, err := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("PUT")
 }

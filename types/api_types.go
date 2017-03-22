@@ -20,6 +20,11 @@ var (
 		Code:    "REGISTER_USER_EXISTS",
 	}
 
+	ErrorUpdateProfileFailed = APIError{
+		Message: "Updating user profile failed",
+		Code: "UPDATE_PROFILE_FAILED",
+	}
+
 	// Generic errors
 
 	ErrorGenericRead = APIError{
