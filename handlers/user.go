@@ -14,7 +14,6 @@ import (
 // UserHandler ...
 func UserHandler(app app.App, r *mux.Router) {
 	client := app.Client
-	firebase := app.Firebase
 
 	r.HandleFunc("/register_device", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
