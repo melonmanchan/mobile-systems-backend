@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"./app"
+	"./aws"
 	"./config"
 	"./handlers"
 	"./middleware"
@@ -25,6 +26,8 @@ func main() {
 	db, err := models.ConnectToDatabase(config.PgConf)
 
 	fb := notifications.BuildFirebaseClient(config)
+
+	aws := aws.BuildAWSUploader(config.S3Conf)
 
 	if err != nil {
 		log.Fatal(err)
@@ -52,7 +55,7 @@ func main() {
 	)
 
 	// App variable holding the database connection and configuration that we can inject into handy places!
-	app := app.App{Client: *db, Config: config, Firebase: fb}
+	app := app.App{Client: *db, Config: config, Firebase: fb, Uploader: aws}
 
 	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()

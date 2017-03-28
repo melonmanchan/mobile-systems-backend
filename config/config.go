@@ -16,9 +16,16 @@ type PostgresConfig struct {
 	Port     int
 }
 
+// S3Config ...
+type S3Config struct {
+	Bucket string
+	Region string
+}
+
 // Config ...
 type Config struct {
 	PgConf            PostgresConfig
+	S3Conf            S3Config
 	JWTSecret         string
 	FirebaseServerKey string
 	MigrationsPath    string
@@ -31,12 +38,16 @@ func (cfg PostgresConfig) PostgresConfigToConnectionString() string {
 
 var defaultConf = Config{
 	PgConf: PostgresConfig{
-		Username: "emmilinkola",
+		Username: "mat",
 		Database: "tutee",
 		Password: "",
 		Host:     "localhost",
 		Params:   "?sslmode=disable",
 		Port:     5432,
+	},
+	S3Conf: S3Config{
+		Bucket: "tuteepics",
+		Region: "eu-central-1",
 	},
 	JWTSecret:         "secret",
 	FirebaseServerKey: "",

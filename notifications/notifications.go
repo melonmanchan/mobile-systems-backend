@@ -10,18 +10,18 @@ import (
 
 // Firebase ...
 type Firebase struct {
-	fb fcm.FCM
+	*fcm.FCM
 }
 
 // BuildFirebaseClient ...
 func BuildFirebaseClient(cfg config.Config) Firebase {
 	fcm := fcm.NewFCM(cfg.FirebaseServerKey)
-	return Firebase{fb: *fcm}
+	return Firebase{fcm}
 }
 
 // SendNotification ...
 func (f Firebase) SendNotification(devices []string, payload fcm.Notification) error {
-	_, err := f.fb.Send(fcm.Message{
+	_, err := f.Send(fcm.Message{
 		RegistrationIDs:  devices,
 		ContentAvailable: true,
 		Priority:         fcm.PriorityHigh,
@@ -33,7 +33,7 @@ func (f Firebase) SendNotification(devices []string, payload fcm.Notification) e
 
 func (f Firebase) sendEvent(devices []string, data map[string]string) error {
 
-	_, err := f.fb.Send(fcm.Message{
+	_, err := f.Send(fcm.Message{
 		RegistrationIDs:  devices,
 		ContentAvailable: true,
 		Priority:         fcm.PriorityHigh,

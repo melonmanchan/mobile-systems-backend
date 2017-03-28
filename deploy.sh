@@ -17,13 +17,13 @@ cp server-deploy build
 cp -r migrations build
 
 echo "Stopping server..."
-ssh $DEPLOY_HOST "source /etc/profile; pkill server-deploy 2>/dev/null"
+ssh "$DEPLOY_HOST" "systemctl stop tutee"
 
 echo "Copying assets..."
 scp -r build $DEPLOY_HOST:/root
 
 echo "Restarting server..."
-ssh "$DEPLOY_HOST" "source /etc/profile; pkill server-deploy; nohup /root/build/server-deploy > tutee.out 2> tutee.err.out < /dev/null &"
+ssh "$DEPLOY_HOST" "systemctl start tutee"
 
 rm -r build
 echo "Done!"
