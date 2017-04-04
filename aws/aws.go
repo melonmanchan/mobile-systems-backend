@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"../config"
+	"../utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -56,7 +57,7 @@ func (u Uploader) UploadAvatar(file io.Reader) (url string, err error) {
 		return "", err
 	}
 
-	name := "asdasdasd" + types[0]
+	name := utils.RandomString(64) + types[0]
 
 	_, err = u.uploadToAWS(file, "avatars/"+name, contentType)
 
