@@ -9,6 +9,7 @@ import (
 	"../types"
 	"../utils"
 	"github.com/gorilla/mux"
+	"github.com/guregu/null"
 )
 
 // UserHandler ...
@@ -70,11 +71,25 @@ func UserHandler(app app.App, r *mux.Router) {
 		defer file.Close()
 
 		if err != nil {
-			// TODO
-			panic(err)
+			utils.FailResponse(w, []types.APIError{types.ErrorUpdateProfileFailed}, http.StatusBadRequest)
+			return
 		}
 
-		_, _ = uploader.UploadAvatar(file)
+		url, err := uploader.UploadAvatar(file)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorUpdateProfileFailed}, http.StatusBadRequest)
+			return
+		}
+
+		user.Avatar = null.StringFrom(url)
+
+		err = client.ChangeUserAvatar(user)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorUpdateProfileFailed}, http.StatusBadRequest)
+			return
+		}
 
 		APIResp := types.APIResponse{Result: user, Status: 200}
 		encoded, err := json.Marshal(APIResp)

@@ -1,10 +1,10 @@
 package models
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"errors"
 
+	"github.com/guregu/null"
 	"github.com/lib/pq"
 
 	"golang.org/x/crypto/bcrypt"
@@ -39,7 +39,8 @@ type User struct {
 	LastName     string         `json:"last_name" db:"last_name"`
 	Email        string         `json:"email" db:"email"`
 	Description  string         `json:"description" db:"description"`
-	Password     sql.NullString `json:"-" db:"password"`
+	Password     null.String    `json:"-" db:"password"`
+	Avatar       null.String    `json:"avatar" db:"avatar"`
 	DeviceTokens pq.StringArray `json:"-" db:"device_tokens"`
 
 	UserType             UserType             `json:"user_type" db:"user_type"`
@@ -104,8 +105,8 @@ func (c Client) CreateUser(user *User) error {
 	}
 
 	res, err := c.DB.NamedExec(`
-	INSERT INTO users (first_name, last_name, email, password, description, user_type, auth_method)
-	VALUES(:first_name, :last_name, :email, :password, :description, :user_type, :auth_method)
+	INSERT INTO users (first_name, last_name, email, password, avatar, description, user_type, auth_method)
+	VALUES(:first_name, :last_name, :email, :password, :avatar, :description, :user_type, :auth_method)
 	`, user)
 
 	if err != nil {
@@ -130,7 +131,7 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 	}
 
 	err := c.DB.Get(&user, `
-	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.device_tokens,
+	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.avatar, users.device_tokens,
 	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
@@ -154,6 +155,21 @@ func (c Client) UpdateUserProfile(user *User) error {
 	_, err := c.DB.NamedExec(`
 		UPDATE users
 		SET first_name = :first_name, last_name = :last_name
+		WHERE users.id = :id;
+	`, user)
+
+	return err
+}
+
+// ChangeUserAvatar ...
+func (c Client) ChangeUserAvatar(user *User) error {
+	if user.ID == 0 {
+		return errors.New("user id is not valid")
+	}
+
+	_, err := c.DB.NamedExec(`
+		UPDATE users
+		SET avatar = :avatar
 		WHERE users.id = :id;
 	`, user)
 

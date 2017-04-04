@@ -1,12 +1,12 @@
 package types
 
 import (
-	"database/sql"
 	"fmt"
 	"time"
 
 	"../models"
 	v "../validators"
+	"github.com/guregu/null"
 )
 
 // LoginRequest ...
@@ -39,7 +39,7 @@ func (req RegisterRequest) ToUser() models.User {
 		FirstName:            req.FirstName,
 		LastName:             req.LastName,
 		Email:                req.Email,
-		Password:             sql.NullString{String: req.Password, Valid: true},
+		Password:             null.StringFrom(req.Password),
 		Description:          "",
 		AuthenticationMethod: models.NormalAuth,
 	}
