@@ -14,6 +14,7 @@ import (
 // UserHandler ...
 func UserHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	uploader := app.Uploader
 
 	r.HandleFunc("/register_device", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
@@ -56,6 +57,27 @@ func UserHandler(app app.App, r *mux.Router) {
 
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("POST")
+
+	r.HandleFunc("/change_avatar", func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(types.UserKey).(*models.User)
+
+		r.ParseMultipartForm(32 << 20)
+
+		file, _, err := r.FormFile("avatar")
+
+		defer file.Close()
+
+		if err != nil {
+			// TODO
+			panic(err)
+		}
+
+		_, _ = uploader.UploadAvatar(file)
+
+		APIResp := types.APIResponse{Result: user, Status: 200}
+		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("POST")
 

@@ -1,8 +1,11 @@
 package aws
 
 import (
+	"bytes"
 	"fmt"
-	"os"
+	"io"
+	"mime"
+	"net/http"
 
 	"../config"
 
@@ -31,13 +34,7 @@ func (u Uploader) getAvatarURL(fileName string) string {
 	return u.getS3URL("avatars/" + fileName)
 }
 
-func (u Uploader) uploadToAWS(fileName string, key string, contentType string) (putOutput *s3manager.UploadOutput, err error) {
-	file, err := os.Open(fileName)
-
-	if err != nil {
-		return nil, err
-	}
-
+func (u Uploader) uploadToAWS(file io.Reader, key string, contentType string) (putOutput *s3manager.UploadOutput, err error) {
 	uploadResult, err := u.Upload(&s3manager.UploadInput{
 		Bucket:      &u.cfg.Bucket,
 		ContentType: &contentType,
@@ -46,4 +43,26 @@ func (u Uploader) uploadToAWS(fileName string, key string, contentType string) (
 	})
 
 	return uploadResult, err
+}
+
+func (u Uploader) UploadAvatar(file io.Reader) (url string, err error) {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(file)
+	contentType := http.DetectContentType(buf.Bytes())
+
+	types, err := mime.ExtensionsByType(contentType)
+
+	if err != nil {
+		return "", err
+	}
+
+	name := "asdasdasd" + types[0]
+
+	_, err = u.uploadToAWS(file, "avatars/"+name, contentType)
+
+	if err != nil {
+		return "", err
+	}
+
+	return u.getAvatarURL(name), err
 }
