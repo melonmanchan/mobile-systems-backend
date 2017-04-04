@@ -77,7 +77,7 @@ func main() {
 		negroni.Wrap(userRouter),
 	))
 
-	subjectsRouter := mux.NewRouter().PathPrefix("/subject").Subrouter().StrictSlash(true)
+	subjectsRouter := mux.NewRouter().PathPrefix("/subject").Subrouter().StrictSlash(false)
 
 	handlers.SubjectHandler(app, subjectsRouter)
 
