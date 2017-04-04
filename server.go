@@ -77,6 +77,14 @@ func main() {
 		negroni.Wrap(userRouter),
 	))
 
+	subjectsRouter := mux.NewRouter().PathPrefix("/subject").Subrouter().StrictSlash(true)
+
+	handlers.SubjectHandler(app, subjectsRouter)
+
+	mainRouter.PathPrefix("/subject").Handler(n.With(
+		negroni.Wrap(subjectsRouter),
+	))
+
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
 
 	n.UseHandler(mainRouter)
