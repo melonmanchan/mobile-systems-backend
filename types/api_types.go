@@ -22,7 +22,12 @@ var (
 
 	ErrorUpdateProfileFailed = APIError{
 		Message: "Updating user profile failed",
-		Code: "UPDATE_PROFILE_FAILED",
+		Code:    "UPDATE_PROFILE_FAILED",
+	}
+
+	ErrorRegisterTutorFailed = APIError{
+		Message: "Registering tutor profile failed",
+		Code:    "REGISTER_TUTOR_FAILED",
 	}
 
 	// Generic errors

@@ -45,6 +45,7 @@ type User struct {
 
 	UserType             UserType             `json:"user_type" db:"user_type"`
 	AuthenticationMethod AuthenticationMethod `json:"auth_method"  db:"auth_method"`
+	Subjects             []Subject            `json:"subject" db:"subjects"`
 }
 
 // AuthenticationMethod ...
