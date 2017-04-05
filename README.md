@@ -9,4 +9,4 @@ JSON REST API made with Go and Postgres for the Tutee app
     ./server
 ```
 
-This will start the API on port 8080
+This will start the API on port 8080.
