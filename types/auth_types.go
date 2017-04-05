@@ -28,7 +28,7 @@ type RegisterRequest struct {
 type LoginResponse struct {
 	User      *models.User `json:"user"`
 	Token     string       `json:"token"`
-	ExpiresAt time.Time    `json:"expires_at"`
+	ExpiresAt int64        `json:"expires_at"`
 	CreatedAt time.Time    `json:"created_at"`
 }
 

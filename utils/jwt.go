@@ -17,13 +17,13 @@ type Claims struct {
 }
 
 // CreateUserToken ...
-func CreateUserToken(user models.User, cfg config.Config) (token string, expiresat time.Time, err error) {
-	expiresAt := time.Now().Add(time.Hour * 10)
+func CreateUserToken(user models.User, cfg config.Config) (token string, expiresat int64, err error) {
+	expiresAt := time.Now().Add(time.Hour * 48).Unix()
 
 	claims := Claims{
 		user,
 		jwt.StandardClaims{
-			ExpiresAt: expiresAt.Unix(),
+			ExpiresAt: expiresAt,
 			Issuer:    "localhost:8080",
 		},
 	}
