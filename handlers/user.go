@@ -17,6 +17,10 @@ import (
 func UserHandler(app app.App, r *mux.Router) {
 	client := app.Client
 	uploader := app.Uploader
+	
+	r.HandleFunc("/get_tutors_by_subject", func(w http.ResponseWriter, r *http.Request){
+		subject = r.Context().value(types.UserKey).(*models.)
+	}).Methods("GET")
 
 	r.HandleFunc("/register_device", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
