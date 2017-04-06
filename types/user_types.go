@@ -13,11 +13,6 @@ type RegisterTutorExtraRequest struct {
 	Subjects    []models.Subject `json:"subjects"`
 }
 
-// GetTutorBySubejectRequest
-type GetTutorsBySubjectRequest struct {
-	Subject models.Subject 'json:"subject"'
-}
-
 // UpdateUserRequest ...
 type UpdateUserRequest struct {
 	User models.User `json:"user"`

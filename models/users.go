@@ -147,22 +147,20 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 	return &user, nil
 }
 
-// GetTutorsBySubject...
+// GetTutorsBySubject ...
 func (c Client) GetTutorsBySubject(subject *Subject) ([]User, error) {
 	tutors := []User{}
-	
+
 	err := c.DB.Get(&tutors, `
 	SELECT *
 	FROM users
-	WHERE users.user_type = "TUTOR" AND $1 IN users.subjects;', subject) 
-	
+	WHERE users.user_type = "TUTOR" AND $1 IN users.subjects;`, subject)
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return tutors, nil
-	
-	
 }
 
 // UpdateUserProfile ...
