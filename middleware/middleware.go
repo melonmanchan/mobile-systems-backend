@@ -35,9 +35,6 @@ func CreateResolveUser(app app.App) func(rw http.ResponseWriter, r *http.Request
 			return
 		}
 
-		log.Println(user.Email)
-		log.Println(user.AuthenticationMethod)
-
 		fullUser, err := client.GetUserByEmail(user.Email, user.AuthenticationMethod)
 
 		if err != nil {
