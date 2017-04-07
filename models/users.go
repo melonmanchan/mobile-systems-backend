@@ -197,7 +197,7 @@ func (c Client) UpdateTutorProfile(user *User) error {
 	}
 
 	stmt, err := tx.Prepare(`
-		INSERT INTO TutorToSubject(user_id, subject_id)
+		INSERT INTO user_to_subject(user_id, subject_id)
 		VALUES ($1, $2)
 		ON CONFLICT DO NOTHING;
 		`)
