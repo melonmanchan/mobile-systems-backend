@@ -104,6 +104,11 @@ func UserHandler(app app.App, r *mux.Router) {
 		var req types.RegisterTutorExtraRequest
 		defer r.Body.Close()
 
+		if user.UserType != models.TutorType {
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericUserNotTutor}, http.StatusForbidden)
+			return
+		}
+
 		err := decoder.Decode(&req)
 
 		if err != nil {
@@ -121,7 +126,7 @@ func UserHandler(app app.App, r *mux.Router) {
 		user.Description = req.Description
 		log.Println(req.Subjects)
 
-		//		err = client.UpdateTutorProfile(&user)
+		err = client.UpdateTutorProfile(*user)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorRegisterTutorFailed}, http.StatusInternalServerError)

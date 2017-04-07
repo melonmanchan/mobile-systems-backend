@@ -42,6 +42,11 @@ var (
 		Code:    "ERROR_GENERIC_TOKEN_CREATE",
 	}
 
+	ErrorGenericUserNotTutor = APIError{
+		Message: "You need to be a tutor to do that!",
+		Code:    "ERROR_GENERIC_USER_NOT_TUTOR",
+	}
+
 	ErrorGenericTokenMissing = APIError{
 		Message: "Authentication token missing",
 		Code:    "ERROR_GENERIC_TOKEN_MISSING",

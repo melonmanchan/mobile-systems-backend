@@ -178,6 +178,39 @@ func (c Client) UpdateUserProfile(user *User) error {
 	return err
 }
 
+func (c Client) UpdateTutorProfile(user *User) error {
+	tx, err := c.DB.Begin()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`
+		UPDATE users
+		SET description = $1
+		WHERE users.id = $2;
+	`, user.ID, user.Description)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	stmt, err := tx.Prepare(`
+		INSERT INTO TutorToSubject(user_id, subject_id)
+		VALUES ($1, $2)
+		ON CONFLICT DO NOTHING;
+		`)
+
+	defer stmt.Close()
+
+	for _, s := range user.Subjects {
+		stmt.Exec()
+	}
+
+	return tx.Commit()
+}
+
 // ChangeUserAvatar ...
 func (c Client) ChangeUserAvatar(user *User) error {
 	if user.ID == 0 {
