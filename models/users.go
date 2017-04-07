@@ -45,7 +45,7 @@ type User struct {
 
 	UserType             UserType             `json:"user_type" db:"user_type"`
 	AuthenticationMethod AuthenticationMethod `json:"auth_method"  db:"auth_method"`
-	Subjects             []Subject            `json:"subject" db:"subjects"`
+	Subjects             []Subject            `json:"subjects" db:"subjects"`
 }
 
 // AuthenticationMethod ...
@@ -123,6 +123,7 @@ func (c Client) CreateUser(user *User) error {
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
+	subjects := []Subject{}
 
 	// ID might not persist in JWT, resolve it this way
 	if method.Type == NormalAuth.Type {
@@ -143,6 +144,19 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 	if err != nil {
 		return nil, err
 	}
+
+	err = c.DB.Select(&subjects, `
+	SELECT subjects.* FROM subjects
+	WHERE subjects.id IN (
+		SELECT user_to_subject.subject_id FROM user_to_subject
+		WHERE user_to_subject.user_id = $1
+	);`, user.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user.Subjects = subjects
 
 	return &user, nil
 }

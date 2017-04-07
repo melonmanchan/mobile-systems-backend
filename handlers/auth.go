@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -89,6 +90,7 @@ func AuthHandler(app app.App, r *mux.Router) {
 		user, err := client.GetUserByEmail(req.Email, models.NormalAuth)
 
 		if err != nil {
+			log.Print(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorLoginUserNotFound}, http.StatusBadRequest)
 			return
 		}
