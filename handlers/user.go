@@ -124,11 +124,11 @@ func UserHandler(app app.App, r *mux.Router) {
 		}
 
 		user.Description = req.Description
-		log.Println(req.Subjects)
 
-		err = client.UpdateTutorProfile(*user)
+		err = client.UpdateTutorProfile(user, req.Subjects)
 
 		if err != nil {
+			log.Print(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorRegisterTutorFailed}, http.StatusInternalServerError)
 			return
 		}

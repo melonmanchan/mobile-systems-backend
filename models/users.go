@@ -151,15 +151,6 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 func (c Client) GetTutorsBySubject(subject *Subject) ([]User, error) {
 	tutors := []User{}
 
-	err := c.DB.Get(&tutors, `
-	SELECT *
-	FROM users
-	WHERE users.user_type = "TUTOR" AND $1 IN users.subjects;`, subject)
-
-	if err != nil {
-		return nil, err
-	}
-
 	return tutors, nil
 }
 
@@ -178,7 +169,8 @@ func (c Client) UpdateUserProfile(user *User) error {
 	return err
 }
 
-func (c Client) UpdateTutorProfile(user *User) error {
+// UpdateTutorProfile ...
+func (c Client) UpdateTutorProfile(user *User, subjects []Subject) error {
 	tx, err := c.DB.Begin()
 
 	if err != nil {
@@ -189,7 +181,7 @@ func (c Client) UpdateTutorProfile(user *User) error {
 		UPDATE users
 		SET description = $1
 		WHERE users.id = $2;
-	`, user.ID, user.Description)
+	`, user.Description, user.ID)
 
 	if err != nil {
 		tx.Rollback()
@@ -204,8 +196,13 @@ func (c Client) UpdateTutorProfile(user *User) error {
 
 	defer stmt.Close()
 
-	for _, s := range user.Subjects {
-		stmt.Exec()
+	for _, s := range subjects {
+		_, err = stmt.Exec(user.ID, s.ID)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	return tx.Commit()
