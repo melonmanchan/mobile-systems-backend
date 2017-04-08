@@ -132,9 +132,17 @@ func (c Client) GetTutorsBySubjectID(ID int64) ([]User, error) {
 	INNER JOIN user_types ON users.user_type = user_types.id
 	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
 	WHERE users.id IN (
-		SELECT user_to_subject.subject_id FROM user_to_subject
+		SELECT user_to_subject.user_id FROM user_to_subject
 		WHERE user_to_subject.subject_id = $1
 	);`, ID)
+
+	for i := range tutors {
+		err = c.GetUserSubjects(&tutors[i])
+
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return tutors, err
 }
@@ -142,7 +150,6 @@ func (c Client) GetTutorsBySubjectID(ID int64) ([]User, error) {
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
-	subjects := []Subject{}
 
 	// ID might not persist in JWT, resolve it this way
 	if method.Type == NormalAuth.Type {
@@ -164,18 +171,11 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 		return nil, err
 	}
 
-	err = c.DB.Select(&subjects, `
-	SELECT subjects.* FROM subjects
-	WHERE subjects.id IN (
-		SELECT user_to_subject.subject_id FROM user_to_subject
-		WHERE user_to_subject.user_id = $1
-	);`, user.ID)
+	err = c.GetUserSubjects(&user)
 
 	if err != nil {
 		return nil, err
 	}
-
-	user.Subjects = subjects
 
 	return &user, nil
 }
