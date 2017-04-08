@@ -120,6 +120,25 @@ func (c Client) CreateUser(user *User) error {
 	return nil
 }
 
+//GetTutorsBySubjectID ...
+func (c Client) GetTutorsBySubjectID(ID int64) ([]User, error) {
+	tutors := []User{}
+
+	err := c.DB.Select(&tutors, `
+	SELECT users.id, users.first_name, users.last_name, users.email, users.avatar, users.device_tokens,
+	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
+	FROM users
+	INNER JOIN user_types ON users.user_type = user_types.id
+	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
+	WHERE users.id IN (
+		SELECT user_to_subject.subject_id FROM user_to_subject
+		WHERE user_to_subject.subject_id = $1
+	);`, ID)
+
+	return tutors, err
+}
+
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}
@@ -159,13 +178,6 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 	user.Subjects = subjects
 
 	return &user, nil
-}
-
-// GetTutorsBySubject ...
-func (c Client) GetTutorsBySubjectID(id int64) ([]User, error) {
-	tutors := []User{}
-
-	return tutors, nil
 }
 
 // UpdateUserProfile ...
