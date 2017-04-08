@@ -162,7 +162,7 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 }
 
 // GetTutorsBySubject ...
-func (c Client) GetTutorsBySubject(subject *Subject) ([]User, error) {
+func (c Client) GetTutorsBySubjectID(id int64) ([]User, error) {
 	tutors := []User{}
 
 	return tutors, nil
