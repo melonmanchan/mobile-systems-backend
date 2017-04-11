@@ -41,6 +41,11 @@ var (
 		Code:    "ERROR_CREATING_TUTORSHIP",
 	}
 
+	ErrorGetTutorships = APIError{
+		Message: "Getting tutorships failed!",
+		Code:    "ERROR_GET_TUTORSHIPS",
+	}
+
 	// Generic errors
 
 	ErrorGenericRead = APIError{
