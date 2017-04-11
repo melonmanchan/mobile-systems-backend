@@ -18,7 +18,6 @@ import (
 )
 
 func main() {
-
 	// First off, parse configuration variables from the server environment
 	config := config.ParseTuteeConfig()
 
@@ -75,6 +74,15 @@ func main() {
 	mainRouter.PathPrefix("/user").Handler(n.With(
 		negroni.HandlerFunc(middleware.CreateResolveUser(app)),
 		negroni.Wrap(userRouter),
+	))
+
+	tutorshipRouter := mux.NewRouter().PathPrefix("/tutorship").Subrouter().StrictSlash(false)
+
+	handlers.TutorshipHandler(app, tutorshipRouter)
+
+	mainRouter.PathPrefix("/tutorship").Handler(n.With(
+		negroni.HandlerFunc(middleware.CreateResolveUser(app)),
+		negroni.Wrap(tutorshipRouter),
 	))
 
 	subjectsRouter := mux.NewRouter().PathPrefix("/subject").Subrouter().StrictSlash(false)
