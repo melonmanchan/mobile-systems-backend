@@ -30,6 +30,17 @@ var (
 		Code:    "REGISTER_TUTOR_FAILED",
 	}
 
+	// Tutorship errors
+	ErrorNotTutor = APIError{
+		Message: "The user is not a tutor!",
+		Code:    "ERROR_NOT_TUTOR",
+	}
+
+	ErrorCreatingTutorship = APIError{
+		Message: "Creating tutorship failed!",
+		Code:    "ERROR_CREATING_TUTORSHIP",
+	}
+
 	// Generic errors
 
 	ErrorGenericRead = APIError{
