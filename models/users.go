@@ -248,3 +248,14 @@ func (c Client) ChangeUserAvatar(user *User) error {
 
 	return err
 }
+
+// IsUserIDTutor ...
+func (c Client) IsUserIDTutor(id int64) (bool, error) {
+	var tutorID int64
+
+	err := c.DB.Get(&tutorID, `
+	SELECT user_type FROM users WHERE users.id = $1;
+	`, id)
+
+	return (tutorID == TutorType.ID), err
+}
