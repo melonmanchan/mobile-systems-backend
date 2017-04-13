@@ -30,7 +30,7 @@ func (c Client) GetUserTutors(user *User) ([]User, error) {
 	WHERE users.id IN (
 		SELECT  tutorships.tutor_id FROM tutorships
 		WHERE tutorships.tutee_id = $1
-	);`, user.ID)
+	) AND users.id != $1;`, user.ID)
 
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (c Client) GetUserTutees(user *User) ([]User, error) {
 	WHERE users.id IN (
 		SELECT tutorships.tutee_id FROM tutorships
 		WHERE tutorships.tutee_id = $1
-	);`, user.ID)
+	) AND users.ID != $1;`, user.ID)
 
 	if err != nil {
 		return nil, err
