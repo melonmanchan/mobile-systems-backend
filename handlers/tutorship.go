@@ -53,14 +53,22 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
-		tutorships, err := client.GetUserTutorships(user)
+		tutors, err := client.GetUserTutors(user)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGetTutorships}, http.StatusBadRequest)
 			return
 		}
 
-		APIResp := types.APIResponse{Result: tutorships, Status: 200}
+		tutees, err := client.GetUserTutees(user)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGetTutorships}, http.StatusBadRequest)
+			return
+		}
+
+		resp := types.TutorshipsResponse{Tutors: tutors, Tutees: tutees}
+		APIResp := types.APIResponse{Result: resp, Status: 200}
 		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("GET")
