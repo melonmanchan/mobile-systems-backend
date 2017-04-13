@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"../app"
@@ -23,21 +24,22 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 		var req types.CreateTutorShipRequest
 		defer r.Body.Close()
 
-		err := decoder.Decode(req)
+		err := decoder.Decode(&req)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
 
-		isTutor, err := client.IsUserIDTutor(req.TutorID)
+		//isTutor, err := client.IsUserIDTutor(req.TutorID)
 
-		if !isTutor || err != nil {
-			utils.FailResponse(w, []types.APIError{types.ErrorNotTutor}, http.StatusBadRequest)
-			return
-		}
+		//if !isTutor || err != nil {
+		// if err != nil {
+		// utils.FailResponse(w, []types.APIError{types.ErrorNotTutor}, http.StatusBadRequest)
+		// return
+		// }
 
-		err = client.CreateTutorship(user.ID, req.TutorID)
+		err = client.CreateTutorship(req.TutorID, user.ID)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorCreatingTutorship}, http.StatusBadRequest)
@@ -56,6 +58,7 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 		tutors, err := client.GetUserTutors(user)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGetTutorships}, http.StatusBadRequest)
 			return
 		}
@@ -63,6 +66,7 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 		tutees, err := client.GetUserTutees(user)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGetTutorships}, http.StatusBadRequest)
 			return
 		}
