@@ -1,7 +1,5 @@
 package models
 
-import "errors"
-
 // Tutorship ...
 type Tutorship struct {
 	ID    int64 `json:"id" db:"id"`
@@ -43,10 +41,6 @@ func (c Client) GetUserTutors(user *User) ([]User, error) {
 
 func (c Client) GetUserTutees(user *User) ([]User, error) {
 	tutees := []User{}
-
-	if user.UserType == TuteeType {
-		return nil, errors.New("user is not a tutor")
-	}
 
 	err := c.DB.Select(&tutees, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.avatar, users.device_tokens,
