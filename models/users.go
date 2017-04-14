@@ -34,15 +34,15 @@ var (
 
 // User ...
 type User struct {
-	ID           int64          `json:"id" db:"id"`
-	FirstName    string         `json:"first_name" db:"first_name"`
-	LastName     string         `json:"last_name" db:"last_name"`
-	Email        string         `json:"email" db:"email"`
-	Description  string         `json:"description" db:"description"`
-	Password     null.String    `json:"-" db:"password"`
-	Avatar       null.String    `json:"avatar" db:"avatar"`
-	DeviceTokens pq.StringArray `json:"-" db:"device_tokens"`
-
+	ID                   int64                `json:"id" db:"id"`
+	FirstName            string               `json:"first_name" db:"first_name"`
+	LastName             string               `json:"last_name" db:"last_name"`
+	Email                string               `json:"email" db:"email"`
+	Description          string               `json:"description" db:"description"`
+	Password             null.String          `json:"-" db:"password"`
+	Avatar               null.String          `json:"avatar" db:"avatar"`
+	DeviceTokens         pq.StringArray       `json:"-" db:"device_tokens"`
+	Price                null.Int             `json:"price" db:"price"`
 	UserType             UserType             `json:"user_type" db:"user_type"`
 	AuthenticationMethod AuthenticationMethod `json:"auth_method"  db:"auth_method"`
 	Subjects             []Subject            `json:"subjects" db:"subjects"`
@@ -126,7 +126,7 @@ func (c Client) GetTutorsBySubjectID(ID int64) ([]User, error) {
 
 	err := c.DB.Select(&tutors, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.avatar, users.device_tokens,
-	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	users.description, users.price, user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
@@ -153,7 +153,7 @@ func (c Client) GetUserByID(ID int64) (*User, error) {
 
 	err := c.DB.Get(&user, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.avatar, users.device_tokens,
-	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	users.description, users.price,	user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
@@ -186,7 +186,7 @@ func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User
 
 	err := c.DB.Get(&user, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.avatar, users.device_tokens,
-	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	users.description, users.price, user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
