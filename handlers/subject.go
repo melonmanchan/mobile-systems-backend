@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -23,7 +22,6 @@ func SubjectHandler(app app.App, r *mux.Router) {
 		tutors, err := client.GetTutorsBySubjectID(subjectID)
 
 		if err != nil {
-			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}

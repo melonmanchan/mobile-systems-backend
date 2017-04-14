@@ -46,6 +46,12 @@ var (
 		Code:    "ERROR_GET_TUTORSHIPS",
 	}
 
+	// Message errors
+
+	ErrorGetLatest = APIError{
+		Message: "Getting latest messages failed!",
+		Code:    "ERROR_GET_LATEST",
+	}
 	// Generic errors
 
 	ErrorGenericRead = APIError{
