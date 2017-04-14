@@ -147,6 +147,32 @@ func (c Client) GetTutorsBySubjectID(ID int64) ([]User, error) {
 	return tutors, err
 }
 
+// GetUserByID ...
+func (c Client) GetUserByID(ID int64) (*User, error) {
+	user := User{}
+
+	err := c.DB.Get(&user, `
+	SELECT users.id, users.first_name, users.last_name, users.email, users.password, users.avatar, users.device_tokens,
+	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
+	FROM users
+	INNER JOIN user_types ON users.user_type = user_types.id
+	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
+	WHERE users.ID = $1;`, ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = c.GetUserSubjects(&user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // GetUserByEmail ...
 func (c Client) GetUserByEmail(email string, method AuthenticationMethod) (*User, error) {
 	user := User{}

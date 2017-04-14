@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,11 +12,13 @@ import (
 	"../utils"
 
 	"github.com/gorilla/mux"
+	"github.com/maddevsio/fcm"
 )
 
 // TutorshipHandler ...
 func TutorshipHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	firebase := app.Firebase
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
@@ -31,14 +34,6 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 			return
 		}
 
-		//isTutor, err := client.IsUserIDTutor(req.TutorID)
-
-		//if !isTutor || err != nil {
-		// if err != nil {
-		// utils.FailResponse(w, []types.APIError{types.ErrorNotTutor}, http.StatusBadRequest)
-		// return
-		// }
-
 		err = client.CreateTutorship(req.TutorID, user.ID)
 
 		if err != nil {
@@ -49,6 +44,13 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 		APIResp := types.APIResponse{Status: 201}
 		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
+
+		tutor := c.GetUserByID(req.TutorID)
+
+		firebase.SendNotification(tutor.DeviceTokens, fcm.Notification{
+			Title: "New tutee!",
+			Body:  fmt.Sprintf("You have a new tutee %s %s", user.FirstName, user.LastName),
+		})
 
 	}).Methods("POST")
 
