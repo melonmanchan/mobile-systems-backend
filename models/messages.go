@@ -47,10 +47,11 @@ func (c Client) GetUserLatestReceivedMessages(user *User) ([]Message, error) {
 	messages := []Message{}
 
 	err := c.DB.Select(&messages, `
-	SELECT distinct sender, id, receiver, content, sent_at
+	SELECT DISTINCT ON(sender) sender, id, receiver, content, sent_at
 	FROM messages
-	WHERE messages.receiver = $1
-	ORDER BY messages.sent_at;`, firstID, secondID)
+	WHERE receiver = $1
+	ORDER BY sender, id DESC;
+	`, firstID, secondID)
 
 	if err != nil {
 		return nil, err
