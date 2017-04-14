@@ -59,6 +59,7 @@ func main() {
 	// Instantiating the actual routes
 	mainRouter := mux.NewRouter()
 
+	// Authentication routes
 	authRouter := mux.NewRouter().PathPrefix("/auth").Subrouter().StrictSlash(true)
 
 	handlers.AuthHandler(app, authRouter)
@@ -67,6 +68,7 @@ func main() {
 		negroni.Wrap(authRouter),
 	))
 
+	// User routes
 	userRouter := mux.NewRouter().PathPrefix("/user").Subrouter().StrictSlash(true)
 
 	handlers.UserHandler(app, userRouter)
@@ -76,6 +78,7 @@ func main() {
 		negroni.Wrap(userRouter),
 	))
 
+	// Tutorships routes
 	tutorshipRouter := mux.NewRouter().PathPrefix("/tutorship").Subrouter().StrictSlash(false)
 
 	handlers.TutorshipHandler(app, tutorshipRouter)
@@ -85,12 +88,23 @@ func main() {
 		negroni.Wrap(tutorshipRouter),
 	))
 
+	// Subjects routes
 	subjectsRouter := mux.NewRouter().PathPrefix("/subject").Subrouter().StrictSlash(false)
 
 	handlers.SubjectHandler(app, subjectsRouter)
 
 	mainRouter.PathPrefix("/subject").Handler(n.With(
 		negroni.Wrap(subjectsRouter),
+	))
+
+	// Messages routes
+	messagesRouter := mux.NewRouter().PathPrefix("/message").Subrouter().StrictSlash(false)
+
+	handlers.MessageHandler(app, messagesRouter)
+
+	mainRouter.PathPrefix("/message").Handler(n.With(
+		negroni.HandlerFunc(middleware.CreateResolveUser(app)),
+		negroni.Wrap(messagesRouter),
 	))
 
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
