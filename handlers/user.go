@@ -124,6 +124,7 @@ func UserHandler(app app.App, r *mux.Router) {
 		}
 
 		user.Description = req.Description
+		user.Price = null.IntFrom(req.Price)
 
 		err = client.UpdateTutorProfile(user, req.Subjects)
 
@@ -154,6 +155,8 @@ func UserHandler(app app.App, r *mux.Router) {
 
 		newUser := req.User
 		newUser.ID = user.ID
+
+		log.Println(newUser.Price)
 
 		err = client.UpdateUserProfile(&newUser)
 

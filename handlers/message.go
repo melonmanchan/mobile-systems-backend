@@ -30,6 +30,7 @@ func MessageHandler(app app.App, r *mux.Router) {
 		err := decoder.Decode(&req)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
@@ -37,6 +38,7 @@ func MessageHandler(app app.App, r *mux.Router) {
 		valid, errs := req.IsValid()
 
 		if !valid {
+			log.Println(err)
 			utils.FailResponse(w, errs, http.StatusBadRequest)
 			return
 		}
@@ -44,6 +46,7 @@ func MessageHandler(app app.App, r *mux.Router) {
 		msg, err := client.CreateMessage(user.ID, req.Receiver, req.Content)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorCreateMessage}, http.StatusBadRequest)
 			return
 		}

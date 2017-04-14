@@ -10,6 +10,7 @@ type DeviceRegisterRequest struct {
 // RegisterTutorExtraRequest
 type RegisterTutorExtraRequest struct {
 	Description string           `json:"description"`
+	Price       int64            `json:"price"`
 	Subjects    []models.Subject `json:"subjects"`
 }
 

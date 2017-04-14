@@ -212,9 +212,13 @@ func (c Client) UpdateUserProfile(user *User) error {
 		return errors.New("user id is not valid")
 	}
 
+	if user.UserType == TuteeType {
+		user.Price = null.NewInt(0, false)
+	}
+
 	_, err := c.DB.NamedExec(`
 		UPDATE users
-		SET first_name = :first_name, last_name = :last_name
+		SET first_name = :first_name, last_name = :last_name, price = :price
 		WHERE users.id = :id;
 	`, user)
 
@@ -231,9 +235,9 @@ func (c Client) UpdateTutorProfile(user *User, subjects []Subject) error {
 
 	_, err = tx.Exec(`
 		UPDATE users
-		SET description = $1
+		SET description = $1, price = $2
 		WHERE users.id = $2;
-	`, user.Description, user.ID)
+	`, user.Description, user.Price, user.ID)
 
 	if err != nil {
 		tx.Rollback()
