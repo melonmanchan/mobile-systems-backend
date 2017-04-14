@@ -51,7 +51,7 @@ func (c Client) GetUserLatestReceivedMessages(user *User) ([]Message, error) {
 	FROM messages
 	WHERE receiver = $1
 	ORDER BY sender, id DESC;
-	`, firstID, secondID)
+	`, user.ID)
 
 	if err != nil {
 		return nil, err
