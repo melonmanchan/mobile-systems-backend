@@ -14,3 +14,30 @@ type Message struct {
 	Content    null.String `json":content" db:"content"`
 	SentAt     time.Time   `json:"sent_at" db:"sent_at"`
 }
+
+//CreateMessage
+func (c Client) CreateMessage(senderID int64, receiverID int64, content string) error {
+	_, err := c.DB.Exec(`
+	INSERT INTO messages (sender_id, receiver_id, content)
+	VALUES($1, $2, $3);
+	`, senderID, receiverID, content)
+
+	return err
+}
+
+func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error) {
+	messages := []Message{}
+
+	err := c.DB.Select(&messages, `
+	SELECT messages.* FROM messages
+	WHERE messages.sender_id = $1
+	OR messages.receiver_id = $1
+	OR messages.sender_id = $2
+	OR messages.receiver_id = $2;`, firstID, secondID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
