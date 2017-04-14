@@ -10,8 +10,8 @@ import (
 type Message struct {
 	ID         int64       `json:"id" db:"id"`
 	SenderID   int64       `json:"sender" db:"sender"`
-	ReceiverID int64       `json":receiver" db:"receiver"`
-	Content    null.String `json":content" db:"content"`
+	ReceiverID int64       `json:"receiver" db:"receiver"`
+	Content    null.String `json:"content" db:"content"`
 	SentAt     time.Time   `json:"sent_at" db:"sent_at"`
 }
 

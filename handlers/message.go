@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"../app"
@@ -24,6 +25,8 @@ func MessageHandler(app app.App, r *mux.Router) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
 		messages, err := client.GetUserLatestReceivedMessages(user)
+
+		log.Println(err)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGetLatest}, http.StatusBadRequest)
