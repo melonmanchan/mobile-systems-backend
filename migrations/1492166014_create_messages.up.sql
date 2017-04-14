@@ -3,5 +3,5 @@ CREATE TABLE messages (
     sender integer REFERENCES users(id) NOT NULL,
     receiver integer REFERENCES users(id) NOT NULL,
     content TEXT NOT NULL,
-    sent_at TIMESTAMP DEFAULT current_timestamp
+    sent_at TIMESTAMPTZ DEFAULT now()
 );
