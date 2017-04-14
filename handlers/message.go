@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+	"strconv"
 
 	"../app"
 	"../models"
@@ -17,16 +17,27 @@ import (
 func MessageHandler(app app.App, r *mux.Router) {
 	client := app.Client
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		user := r.Context().Value(types.UserKey).(*models.User)
+		recipientID, _ := strconv.ParseInt(vars["id"], 10, 64)
 
-	}).Methods("POST")
+		messages, err := client.GetConversation(user.ID, recipientID)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGetLatest}, http.StatusBadRequest)
+			return
+		}
+
+		APIResp := types.APIResponse{Result: messages, Status: 200}
+		encoded, _ := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("GET")
 
 	r.HandleFunc("/latest", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
 		messages, err := client.GetUserLatestReceivedMessages(user)
-
-		log.Println(err)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGetLatest}, http.StatusBadRequest)

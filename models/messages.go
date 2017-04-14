@@ -31,10 +31,14 @@ func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error
 
 	err := c.DB.Select(&messages, `
 	SELECT messages.* FROM messages
-	WHERE messages.sender = $1
-	OR messages.receiver = $1
-	OR messages.sender = $2
-	OR messages.receiver = $2;`, firstID, secondID)
+	WHERE
+	(messages.sender = $1
+	AND
+	messages.receiver = $2)
+	OR
+	(messages.sender = $2
+	AND
+	messages.receiver = $1);`, firstID, secondID)
 
 	if err != nil {
 		return nil, err
