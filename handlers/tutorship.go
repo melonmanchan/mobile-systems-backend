@@ -45,7 +45,7 @@ func TutorshipHandler(app app.App, r *mux.Router) {
 		encoded, err := json.Marshal(APIResp)
 		w.Write(encoded)
 
-		tutor := c.GetUserByID(req.TutorID)
+		tutor, _ := client.GetUserByID(req.TutorID)
 
 		firebase.SendNotification(tutor.DeviceTokens, fcm.Notification{
 			Title: "New tutee!",
