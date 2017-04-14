@@ -16,13 +16,22 @@ type Message struct {
 }
 
 // CreateMessage ...
-func (c Client) CreateMessage(senderID int64, receiverID int64, content string) error {
-	_, err := c.DB.Exec(`
+func (c Client) CreateMessage(senderID int64, receiverID int64, content string) (Message, error) {
+	msg := Message{
+		SenderID:   senderID,
+		ReceiverID: receiverID,
+		Content:    null.StringFrom(content),
+		SentAt:     time.Now(),
+	}
+
+	res, err := c.DB.Exec(`
 	INSERT INTO messages (sender, receiver, content)
 	VALUES($1, $2, $3);
 	`, senderID, receiverID, content)
 
-	return err
+	msg.ID, _ = res.LastInsertId()
+
+	return msg, err
 }
 
 // GetConversation ...

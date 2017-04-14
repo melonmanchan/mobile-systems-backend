@@ -1,6 +1,7 @@
 package types
 
-// GeneralMessage ...
-type GeneralMessage struct {
-	Content string `json:"content"`
+// Event ...
+type Event struct {
+	Type    string      `json:"type"`
+	Payload interface{} `json:"payload"`
 }

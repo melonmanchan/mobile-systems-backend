@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"../config"
-	"../types"
+	"../models"
 	"github.com/maddevsio/fcm"
 )
 
@@ -43,8 +43,8 @@ func (f Firebase) sendEvent(devices []string, data map[string]string) error {
 	return err
 }
 
-// SendGeneralMessage ...
-func (f Firebase) SendGeneralMessage(devices []string, message types.GeneralMessage) error {
+// SendMessage ...
+func (f Firebase) SendMessage(devices []string, message models.Message) error {
 	encoded, err := json.Marshal(message)
 
 	if err == nil {
