@@ -47,11 +47,16 @@ var (
 	}
 
 	// Message errors
-
 	ErrorGetLatest = APIError{
 		Message: "Getting latest messages failed!",
 		Code:    "ERROR_GET_LATEST",
 	}
+
+	ErrorCreateMessage = APIError{
+		Message: "Error creating message!",
+		Code:    "ERROR_CRAETE_MESSAGE",
+	}
+
 	// Generic errors
 
 	ErrorGenericRead = APIError{

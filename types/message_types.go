@@ -2,8 +2,8 @@ package types
 
 // CreateMessageRequest ...
 type CreateMessageRequest struct {
-	Recipient int64  `json:"recipient"`
-	Content   string `json:"content"`
+	Receiver int64  `json:"recipient"`
+	Content  string `json:"content"`
 }
 
 // IsValid ...
@@ -14,7 +14,7 @@ func (req CreateMessageRequest) IsValid() (bool, []APIError) {
 		errs = append(errs, RequiredError("Content is required!"))
 	}
 
-	if req.Recipient == 0 {
+	if req.Receiver == 0 {
 		errs = append(errs, RequiredError("Recipient not set!"))
 	}
 

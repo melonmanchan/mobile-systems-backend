@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,20 +17,47 @@ import (
 //MessageHandler ...
 func MessageHandler(app app.App, r *mux.Router) {
 	client := app.Client
+	firebase := app.Firebase
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
 		decoder := json.NewDecoder(r.Body)
 
-		var req types.Create
+		var req types.CreateMessageRequest
 		defer r.Body.Close()
 
 		err := decoder.Decode(&req)
 
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
+			return
+		}
+
+		valid, errs := req.IsValid()
+
+		if !valid {
+			utils.FailResponse(w, errs, http.StatusBadRequest)
+			return
+		}
+
+		msg, err := client.CreateMessage(user.ID, req.Receiver, req.Content)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorCreateMessage}, http.StatusBadRequest)
+			return
+		}
+
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)
 		w.Write(encoded)
+
+		receiver, err := client.GetUserByID(req.Receiver)
+
+		log.Println(err)
+
+		err = firebase.SendMessage(receiver.DeviceTokens, msg)
+		log.Println(err)
 	}).Methods("POST")
 
 	r.HandleFunc("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
