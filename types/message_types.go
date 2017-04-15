@@ -2,7 +2,7 @@ package types
 
 // CreateMessageRequest ...
 type CreateMessageRequest struct {
-	Receiver int64  `json:"recipient"`
+	Receiver int64  `json:"receiver"`
 	Content  string `json:"content"`
 }
 

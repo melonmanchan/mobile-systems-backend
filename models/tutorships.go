@@ -22,7 +22,7 @@ func (c Client) GetUserTutors(user *User) ([]User, error) {
 
 	err := c.DB.Select(&tutors, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.avatar, users.device_tokens,
-	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	users.description, users.price,	user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
@@ -44,15 +44,15 @@ func (c Client) GetUserTutees(user *User) ([]User, error) {
 
 	err := c.DB.Select(&tutees, `
 	SELECT users.id, users.first_name, users.last_name, users.email, users.avatar, users.device_tokens,
-	users.description,	user_types.id as "user_type.id", user_types.type as "user_type.type",
+	users.description, users.price,	user_types.id as "user_type.id", user_types.type as "user_type.type",
 	authentication_methods.id as "auth_method.id", authentication_methods.type as "auth_method.type"
 	FROM users
 	INNER JOIN user_types ON users.user_type = user_types.id
 	INNER JOIN authentication_methods ON users.auth_method = authentication_methods.id
 	WHERE users.id IN (
 		SELECT tutorships.tutee_id FROM tutorships
-		WHERE tutorships.tutee_id = $1
-	) AND users.ID != $1;`, user.ID)
+		WHERE tutorships.tutor_id = $1
+	) AND users.id != $1;`, user.ID)
 
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+
 	"time"
 
 	"./app"
@@ -108,14 +109,13 @@ func main() {
 	))
 
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
-
 	n.UseHandler(mainRouter)
 
 	server := &http.Server{
 		Handler:      n,
 		Addr:         ":8080",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 35 * time.Second,
+		ReadTimeout:  35 * time.Second,
 	}
 
 	log.Println("Server listening on port 8080")

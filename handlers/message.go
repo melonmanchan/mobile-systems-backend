@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -30,7 +29,6 @@ func MessageHandler(app app.App, r *mux.Router) {
 		err := decoder.Decode(&req)
 
 		if err != nil {
-			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
@@ -38,7 +36,6 @@ func MessageHandler(app app.App, r *mux.Router) {
 		valid, errs := req.IsValid()
 
 		if !valid {
-			log.Println(err)
 			utils.FailResponse(w, errs, http.StatusBadRequest)
 			return
 		}
@@ -46,7 +43,6 @@ func MessageHandler(app app.App, r *mux.Router) {
 		msg, err := client.CreateMessage(user.ID, req.Receiver, req.Content)
 
 		if err != nil {
-			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorCreateMessage}, http.StatusBadRequest)
 			return
 		}
@@ -56,11 +52,7 @@ func MessageHandler(app app.App, r *mux.Router) {
 		w.Write(encoded)
 
 		receiver, err := client.GetUserByID(req.Receiver)
-
-		log.Println(err)
-
 		err = firebase.SendMessage(receiver.DeviceTokens, msg)
-		log.Println(err)
 	}).Methods("POST")
 
 	r.HandleFunc("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
