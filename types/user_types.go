@@ -38,6 +38,12 @@ func (req RegisterTutorExtraRequest) IsValid() (bool, []APIError) {
 		errs = append(errs, RequiredError("Description is required"))
 	}
 
+	if req.Price < 0 {
+		errs = append(errs, RequiredError("Price must not be less than 0"))
+	} else if req.Price > 150 {
+		errs = append(errs, RequiredError("Price must not be higher than 150"))
+	}
+
 	if len(req.Subjects) == 0 {
 		errs = append(errs, RequiredError("At least one subject must be selected"))
 	}
