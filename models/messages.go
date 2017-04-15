@@ -57,18 +57,65 @@ func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error
 }
 
 func (c Client) GetUserLatestReceivedMessages(user *User) ([]Message, error) {
-	messages := []Message{}
+	receivedMessages := []Message{}
+	sentMessages := []Message{}
+	out := []Message{}
 
-	err := c.DB.Select(&messages, `
+	// Map indices to a message
+	var uniqueMap map[[2]int64]Message
+	uniqueMap = make(map[[2]int64]Message)
+
+	err := c.DB.Select(&receivedMessages, `
 	SELECT DISTINCT ON(sender) sender, id, receiver, content, sent_at
 	FROM messages
 	WHERE receiver = $1
-	OR sender = $1
 	ORDER BY sender, id DESC;
 	`, user.ID)
 
 	if err != nil {
 		return nil, err
 	}
-	return messages, nil
+
+	err = c.DB.Select(&sentMessages, `
+	SELECT DISTINCT ON(receiver) sender, id, receiver, content, sent_at
+	FROM messages
+	WHERE sender = $1
+	ORDER BY receiver, id DESC;
+	`, user.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	allMessages := append(receivedMessages, sentMessages...)
+
+	for _, m := range allMessages {
+		sender := m.SenderID
+		receiver := m.ReceiverID
+		arr := [2]int64{}
+
+		if receiver < sender {
+			arr[0] = receiver
+			arr[1] = sender
+		} else {
+			arr[0] = sender
+			arr[1] = receiver
+		}
+
+		msg, exists := uniqueMap[arr]
+
+		if exists {
+			if msg.ID < m.ID {
+				uniqueMap[arr] = m
+			}
+		} else {
+			uniqueMap[arr] = m
+		}
+	}
+
+	for _, val := range uniqueMap {
+		out = append(out, val)
+	}
+
+	return out, nil
 }
