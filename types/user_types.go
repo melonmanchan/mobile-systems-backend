@@ -7,7 +7,7 @@ type DeviceRegisterRequest struct {
 	Token string `json:"token"`
 }
 
-// RegisterTutorExtraRequest
+// RegisterTutorExtraRequest ...
 type RegisterTutorExtraRequest struct {
 	Description string           `json:"description"`
 	Price       int64            `json:"price"`

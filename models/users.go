@@ -92,6 +92,17 @@ func (c Client) AddTokenToUser(user *User, token string) error {
 	return err
 }
 
+// RemoveTokenFromUser ...
+func (c Client) RemoveTokenFromUser(user *User, token string) error {
+	_, err := c.DB.Exec(`
+		UPDATE users
+		SET device_tokens = array_remove(device_tokens, $1)
+		WHERE users.id = $2;
+	`, token, user.ID)
+
+	return err
+}
+
 // CreateUser ...
 func (c Client) CreateUser(user *User) error {
 
