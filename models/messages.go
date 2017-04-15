@@ -42,11 +42,11 @@ func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error
 	SELECT messages.* FROM messages
 	WHERE
 	(messages.sender = $1
-	AND
+		AND
 	messages.receiver = $2)
-	OR
+		OR
 	(messages.sender = $2
-	AND
+		AND
 	messages.receiver = $1);`, firstID, secondID)
 
 	if err != nil {
@@ -63,6 +63,7 @@ func (c Client) GetUserLatestReceivedMessages(user *User) ([]Message, error) {
 	SELECT DISTINCT ON(sender) sender, id, receiver, content, sent_at
 	FROM messages
 	WHERE receiver = $1
+	OR sender = $1
 	ORDER BY sender, id DESC;
 	`, user.ID)
 
