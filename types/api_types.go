@@ -54,11 +54,16 @@ var (
 
 	ErrorCreateMessage = APIError{
 		Message: "Error creating message!",
-		Code:    "ERROR_CRAETE_MESSAGE",
+		Code:    "ERROR_CREATE_MESSAGE",
+	}
+
+	// Events errors
+	ErrorCreateEvent = APIError{
+		Message: "Error creating event!",
+		Code:    "ERROR_CREATE_EVENT",
 	}
 
 	// Generic errors
-
 	ErrorGenericRead = APIError{
 		Message: "Error reading request",
 		Code:    "ERROR_GENERIC_READ",
