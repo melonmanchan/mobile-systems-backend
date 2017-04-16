@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"github.com/guregu/null"
@@ -17,6 +18,10 @@ type Event struct {
 
 // CreateNewFreeEvent ...
 func (c Client) CreateNewFreeEvent(user *User, start time.Time, end time.Time) (Event, error) {
+	if user.UserType != TutorType {
+		return Event{}, errors.New("user is not a tutor")
+	}
+
 	event := Event{
 		TutorID:   user.ID,
 		StartTime: start,
@@ -35,5 +40,24 @@ func (c Client) CreateNewFreeEvent(user *User, start time.Time, end time.Time) (
 
 	event.ID, _ = res.LastInsertId()
 	return event, nil
+}
 
+// GetTutorOwnTimes ...
+func (c Client) GetTutorOwnTimes(user *User) ([]Event, error) {
+	events := []Event{}
+
+	if user.UserType != TutorType {
+		return events, errors.New("user is not a tutor")
+	}
+
+	err := c.DB.Select(&events, `
+	SELECT events.* FROM events
+	WHERE events.tutor = $1;
+	;`, user.ID)
+
+	if err != nil {
+		return events, err
+	}
+
+	return events, nil
 }
