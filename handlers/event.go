@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"../app"
 	"../models"
@@ -69,4 +70,47 @@ func EventHandler(app app.App, r *mux.Router) {
 		encoded, _ := json.Marshal(APIResp)
 		w.Write(encoded)
 	}).Methods("DELETE")
+
+	r.HandleFunc("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		tutorID, _ := strconv.ParseInt(vars["id"], 10, 64)
+
+		events, err := client.GetTutorFreeTimes(tutorID)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorFreeTimeGet}, http.StatusBadRequest)
+			return
+		}
+
+		APIResp := types.APIResponse{Result: events, Status: 200}
+		encoded, _ := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("GET")
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(types.UserKey).(*models.User)
+
+		var resp types.GetEventsResponse
+
+		ownTimes, err := client.GetTutorOwnTimes(user)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorFreeTimeGet}, http.StatusBadRequest)
+			return
+		}
+
+		tuteeTimes, err := client.GetTuteeTimes(user)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorFreeTimeGet}, http.StatusBadRequest)
+			return
+		}
+
+		resp.OwnEvents = ownTimes
+		resp.ReservedEvents = tuteeTimes
+
+		APIResp := types.APIResponse{Result: resp, Status: 200}
+		encoded, _ := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("GET")
 }

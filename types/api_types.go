@@ -69,7 +69,17 @@ var (
 		Code:    "ERROR_DELETE_EVENT",
 	}
 
-	// Generic errors
+	ErrorFreeTimeGet = APIError{
+		Message: "Error getting tutor times!",
+		Code:    "ERROR_FREE_TIME_GET",
+	}
+
+	ErrorCalendarGet = APIError{
+		Message: "Error getting calendar!",
+		Code:    "ERROR_CALENDAR_GET",
+	}
+
+	// Generic erors
 	ErrorGenericRead = APIError{
 		Message: "Error reading request",
 		Code:    "ERROR_GENERIC_READ",
