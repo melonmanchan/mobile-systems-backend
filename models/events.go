@@ -131,3 +131,15 @@ func (c Client) GetTuteeTimes(user *User) ([]Event, error) {
 
 	return events, nil
 }
+
+// GetEventByID ...
+func (c Client) GetEventByID(ID int64) (Event, error) {
+	ev := Event{}
+
+	err := c.DB.Get(&ev, `
+	SELECT events.* FROM events
+	WHERE events.id = $1;
+	`, ID)
+
+	return ev, err
+}
