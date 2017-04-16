@@ -247,8 +247,8 @@ func (c Client) UpdateTutorProfile(user *User, subjects []Subject) error {
 	_, err = tx.Exec(`
 		UPDATE users
 		SET description = $1, price = $2
-		WHERE users.id = $2;
-	`, user.Description, user.Price, user.ID)
+		WHERE users.id = $3;
+	`, user.Description, user.Price.Int64, user.ID)
 
 	if err != nil {
 		tx.Rollback()
