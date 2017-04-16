@@ -60,7 +60,13 @@ func MessageHandler(app app.App, r *mux.Router) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 		recipientID, _ := strconv.ParseInt(vars["id"], 10, 64)
 
-		messages, err := client.GetConversation(user.ID, recipientID)
+		toStr := r.URL.Query().Get("to")
+		fromStr := r.URL.Query().Get("from")
+
+		toInt, _ := strconv.ParseInt(toStr, 10, 64)
+		fromInt, _ := strconv.ParseInt(fromStr, 10, 64)
+
+		messages, err := client.GetConversation(user.ID, recipientID, fromInt, toInt)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorGetLatest}, http.StatusBadRequest)

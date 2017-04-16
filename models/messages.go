@@ -35,7 +35,7 @@ func (c Client) CreateMessage(senderID int64, receiverID int64, content string) 
 }
 
 // GetConversation ...
-func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error) {
+func (c Client) GetConversation(firstID int64, secondID int64, fromOffset int64, toOffset int64) ([]Message, error) {
 	messages := []Message{}
 
 	err := c.DB.Select(&messages, `
@@ -47,7 +47,11 @@ func (c Client) GetConversation(firstID int64, secondID int64) ([]Message, error
 		OR
 	(messages.sender = $2
 		AND
-	messages.receiver = $1);`, firstID, secondID)
+		messages.receiver = $1)
+	ORDER BY id DESC
+	LIMIT $3
+	OFFSET $4;
+	`, firstID, secondID, toOffset-fromOffset, fromOffset)
 
 	if err != nil {
 		return nil, err
