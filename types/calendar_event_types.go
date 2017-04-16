@@ -2,7 +2,7 @@ package types
 
 import "time"
 
-// CreateEventRequest ...
+// CreateFreeEventRequest ...
 type CreateFreeEventRequest struct {
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`

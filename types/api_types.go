@@ -58,9 +58,15 @@ var (
 	}
 
 	// Events errors
+
 	ErrorCreateEvent = APIError{
 		Message: "Error creating event!",
 		Code:    "ERROR_CREATE_EVENT",
+	}
+
+	ErrorDeleteEvent = APIError{
+		Message: "Error deleting event!",
+		Code:    "ERROR_DELETE_EVENT",
 	}
 
 	// Generic errors
