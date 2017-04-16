@@ -47,7 +47,7 @@ func MessageHandler(app app.App, r *mux.Router) {
 			return
 		}
 
-		APIResp := types.APIResponse{Status: 200}
+		APIResp := types.APIResponse{Result: msg, Status: 200}
 		encoded, _ := json.Marshal(APIResp)
 		w.Write(encoded)
 
