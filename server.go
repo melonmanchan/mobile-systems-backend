@@ -108,7 +108,18 @@ func main() {
 		negroni.Wrap(messagesRouter),
 	))
 
+	// Events routes
+	eventsRouter := mux.NewRouter().PathPrefix("/event").Subrouter().StrictSlash(false)
+
+	handlers.EventHandler(app, eventsRouter)
+
+	mainRouter.PathPrefix("/event").Handler(n.With(
+		negroni.HandlerFunc(middleware.CreateResolveUser(app)),
+		negroni.Wrap(eventsRouter),
+	))
+
 	mainRouter.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
+
 	n.UseHandler(mainRouter)
 
 	server := &http.Server{
