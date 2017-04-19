@@ -46,10 +46,6 @@ func (c Client) CreateNewFreeEvent(user *User, start time.Time, end time.Time) (
 func (c Client) GetTutorOwnTimes(user *User) ([]Event, error) {
 	events := []Event{}
 
-	if user.UserType != TutorType {
-		return events, errors.New("user is not a tutor")
-	}
-
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
 	WHERE events.tutor = $1;
@@ -122,7 +118,7 @@ func (c Client) GetTuteeTimes(user *User) ([]Event, error) {
 
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
-	WHERE events.tutee IS NOT NULL AND events.tutee = $ 1;
+	WHERE events.tutee IS NOT NULL AND events.tutee = $1;
 	`, user.ID)
 
 	if err != nil {

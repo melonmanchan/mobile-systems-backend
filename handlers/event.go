@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -99,12 +100,16 @@ func EventHandler(app app.App, r *mux.Router) {
 			return
 		}
 
+		log.Println(err)
+
 		tuteeTimes, err := client.GetTuteeTimes(user)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorFreeTimeGet}, http.StatusBadRequest)
 			return
 		}
+
+		log.Println(err)
 
 		resp.OwnEvents = ownTimes
 		resp.ReservedEvents = tuteeTimes
