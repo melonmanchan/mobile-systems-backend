@@ -17,16 +17,19 @@ type Event struct {
 }
 
 // CreateNewFreeEvent ...
-func (c Client) CreateNewFreeEvent(user *User, start time.Time, end time.Time) (Event, error) {
+func (c Client) CreateNewFreeEvent(user *User, start time.Time) (Event, error) {
 	if user.UserType != TutorType {
 		return Event{}, errors.New("user is not a tutor")
 	}
+
+	end := start.UTC().Add(1 * time.Hour)
 
 	event := Event{
 		TutorID:   user.ID,
 		StartTime: start,
 		EndTime:   end,
 	}
+
 	res, err := c.DB.Exec(`
 	INSERT INTO events (tutor, start_time, end_time)
 	VALUES($1, $2, $3);
