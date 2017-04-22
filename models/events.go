@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/guregu/null"
@@ -72,7 +73,7 @@ func (c Client) RemoveTime(user *User, event *Event) error {
 
 	_, err := c.DB.Exec(`
 		DELETE FROM EVENTS
-		WHERE events.start_time = $1 AND events.end_time = $2 AND events.tutor = $3;
+		WHERE events.start_time = $1 AND events.end_time = $2 AND events.tutor = $3 AND events.tutee IS NULL;
 	`, event.StartTime, event.EndTime, user.ID)
 
 	return err
@@ -120,8 +121,10 @@ func (c Client) GetTuteeTimes(user *User) ([]Event, error) {
 
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
-	WHERE events.tutee IS NOT NULL AND events.tutee = $1;
+	WHERE events.tutee = $1;
 	`, user.ID)
+
+	log.Println(err)
 
 	if err != nil {
 		return events, err

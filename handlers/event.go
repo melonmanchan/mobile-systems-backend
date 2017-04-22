@@ -95,6 +95,36 @@ func EventHandler(app app.App, r *mux.Router) {
 		w.Write(encoded)
 	}).Methods("GET")
 
+	r.HandleFunc("/reserve", func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(types.UserKey).(*models.User)
+
+		decoder := json.NewDecoder(r.Body)
+
+		var req models.Event
+		defer r.Body.Close()
+
+		err := decoder.Decode(&req)
+		log.Println(err)
+		log.Println(req)
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
+			return
+		}
+
+		err = client.ReserveTimeForUser(user, &req)
+
+		log.Println(err)
+
+		if err != nil {
+			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
+			return
+		}
+
+		APIResp := types.APIResponse{Status: 200}
+		encoded, _ := json.Marshal(APIResp)
+		w.Write(encoded)
+	}).Methods("PUT")
+
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
@@ -120,6 +150,9 @@ func EventHandler(app app.App, r *mux.Router) {
 
 		resp.OwnEvents = ownTimes
 		resp.ReservedEvents = tuteeTimes
+
+		log.Println(ownTimes)
+		log.Println(tuteeTimes)
 
 		APIResp := types.APIResponse{Result: resp, Status: 200}
 		encoded, _ := json.Marshal(APIResp)
