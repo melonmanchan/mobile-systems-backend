@@ -70,14 +70,10 @@ func (c Client) RemoveTime(user *User, event *Event) error {
 		return errors.New("user is not a tutor")
 	}
 
-	if event.TutorID != user.ID {
-		return errors.New("event is not tutored by user")
-	}
-
 	_, err := c.DB.Exec(`
 		DELETE FROM EVENTS
-		WHERE events.id = $1;
-	`, event.ID)
+		WHERE events.start_time = $1 AND events.end_time = $2 AND events.tutor = $3;
+	`, event.StartTime, event.EndTime, user.ID)
 
 	return err
 }

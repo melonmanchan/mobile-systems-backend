@@ -48,7 +48,7 @@ func EventHandler(app app.App, r *mux.Router) {
 		w.Write(encoded)
 	}).Methods("POST")
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/remove", func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(types.UserKey).(*models.User)
 
 		decoder := json.NewDecoder(r.Body)
@@ -63,9 +63,12 @@ func EventHandler(app app.App, r *mux.Router) {
 			return
 		}
 
+		log.Println(req)
+
 		err = client.RemoveTime(user, &req)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorDeleteEvent}, http.StatusBadRequest)
 			return
 		}
@@ -73,7 +76,7 @@ func EventHandler(app app.App, r *mux.Router) {
 		APIResp := types.APIResponse{Status: 200}
 		encoded, _ := json.Marshal(APIResp)
 		w.Write(encoded)
-	}).Methods("DELETE")
+	}).Methods("PUT")
 
 	r.HandleFunc("/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
