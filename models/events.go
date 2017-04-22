@@ -98,10 +98,25 @@ func (c Client) GetTutorFreeTimes(tutorID int64) ([]Event, error) {
 // ReserveTimeForUser ...
 func (c Client) ReserveTimeForUser(user *User, event *Event) error {
 	if event.TuteeID.Valid {
-		return errors.New("event is already reserver")
+		return errors.New("event is already reserved")
 	}
 
-	_, err := c.DB.Exec(`
+	tutorshipID := int64(-1)
+
+	err := c.DB.QueryRow(`
+	SELECT id from tutorships
+	WHERE tutor_id = $1 AND tutee_id = $2;
+	`, event.TutorID, user.ID).Scan(&tutorshipID)
+
+	if err != nil {
+		return err
+	}
+
+	if tutorshipID == -1 {
+		return errors.New("tutorship does not exist")
+	}
+
+	_, err = c.DB.Exec(`
 		UPDATE events
 		SET tutee = $1 WHERE events.id = $2;
 	`, user.ID, event.ID)
