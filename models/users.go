@@ -225,11 +225,12 @@ func (c Client) UpdateUserProfile(user *User) error {
 
 	if user.UserType == TuteeType {
 		user.Price = null.NewInt(0, false)
+		user.Description = ""
 	}
 
 	_, err := c.DB.NamedExec(`
 		UPDATE users
-		SET first_name = :first_name, last_name = :last_name, price = :price
+		SET first_name = :first_name, last_name = :last_name, price = :price, description = :description
 		WHERE users.id = :id;
 	`, user)
 

@@ -29,6 +29,7 @@ func EventHandler(app app.App, r *mux.Router) {
 		err := decoder.Decode(&req)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorGenericRead}, http.StatusBadRequest)
 			return
 		}
@@ -81,6 +82,7 @@ func EventHandler(app app.App, r *mux.Router) {
 		events, err := client.GetTutorFreeTimes(tutorID)
 
 		if err != nil {
+			log.Println(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorFreeTimeGet}, http.StatusBadRequest)
 			return
 		}

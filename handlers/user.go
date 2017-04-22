@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"../app"
@@ -162,7 +161,6 @@ func UserHandler(app app.App, r *mux.Router) {
 		err = client.UpdateTutorProfile(user, req.Subjects)
 
 		if err != nil {
-			log.Print(err)
 			utils.FailResponse(w, []types.APIError{types.ErrorRegisterTutorFailed}, http.StatusInternalServerError)
 			return
 		}
@@ -188,8 +186,6 @@ func UserHandler(app app.App, r *mux.Router) {
 
 		newUser := req.User
 		newUser.ID = user.ID
-
-		log.Println(newUser.Price)
 
 		err = client.UpdateUserProfile(&newUser)
 
