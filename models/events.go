@@ -30,18 +30,21 @@ func (c Client) CreateNewFreeEvent(user *User, start time.Time) (Event, error) {
 		EndTime:   end,
 	}
 
-	res, err := c.DB.Exec(`
-	INSERT INTO events (tutor, start_time, end_time)
-	VALUES($1, $2, $3);
+	lastInsertID := int64(0)
 
-	`, user.ID, start, end)
+	err := c.DB.QueryRow(`
+	INSERT INTO events (tutor, start_time, end_time)
+	VALUES($1, $2, $3) RETURNING id;
+	`, user.ID, start, end).Scan(&lastInsertID)
+
+	if lastInsertID != 0 {
+		event.ID = lastInsertID
+	}
 
 	if err != nil {
 		return event, err
-
 	}
 
-	event.ID, _ = res.LastInsertId()
 	return event, nil
 }
 

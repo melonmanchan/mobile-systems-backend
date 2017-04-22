@@ -36,7 +36,7 @@ func EventHandler(app app.App, r *mux.Router) {
 
 		event, err := client.CreateNewFreeEvent(user, req.StartTime)
 
-		log.Println(err)
+		log.Println(event)
 
 		if err != nil {
 			utils.FailResponse(w, []types.APIError{types.ErrorCreateEvent}, http.StatusBadRequest)
