@@ -55,7 +55,7 @@ func (c Client) GetTutorOwnTimes(user *User) ([]Event, error) {
 
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
-	WHERE events.tutor = $1;
+	WHERE events.tutor = $1 AND start_time > current_date;
 	`, user.ID)
 
 	if err != nil {
@@ -85,7 +85,7 @@ func (c Client) GetTutorFreeTimes(tutorID int64) ([]Event, error) {
 
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
-	WHERE events.tutor = $1 AND events.tutee IS NULL;
+	WHERE events.tutor = $1 AND events.tutee IS NULL AND start_time > now();
 	`, tutorID)
 
 	if err != nil {
@@ -136,7 +136,7 @@ func (c Client) GetTuteeTimes(user *User) ([]Event, error) {
 
 	err := c.DB.Select(&events, `
 	SELECT events.* FROM events
-	WHERE events.tutee = $1;
+	WHERE events.tutee = $1 AND start_time > current_date;
 	`, user.ID)
 
 	log.Println(err)
