@@ -129,6 +129,6 @@ func main() {
 		ReadTimeout:  35 * time.Second,
 	}
 
-	log.Println("Server listening on port 8080")
+	log.Println("Server listening on port " + config.Port)
 	log.Fatal(server.ListenAndServe())
 }
