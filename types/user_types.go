@@ -1,6 +1,6 @@
 package types
 
-import "../models"
+import "github.com/melonmanchan/mobile-systems-backend/models"
 
 // DeviceRegisterRequest ...
 type DeviceRegisterRequest struct {

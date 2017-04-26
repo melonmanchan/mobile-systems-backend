@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"../config"
-	"../models"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/melonmanchan/mobile-systems-backend/config"
+	"github.com/melonmanchan/mobile-systems-backend/models"
 )
 
 // Claims ...

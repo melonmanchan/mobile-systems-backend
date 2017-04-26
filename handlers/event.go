@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"../app"
-	"../models"
-	"../types"
-	"../utils"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	"github.com/melonmanchan/mobile-systems-backend/types"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
 
 	"github.com/gorilla/mux"
 )

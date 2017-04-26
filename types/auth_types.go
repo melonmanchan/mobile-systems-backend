@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"../models"
-	v "../validators"
 	"github.com/guregu/null"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	v "github.com/melonmanchan/mobile-systems-backend/validators"
 )
 
 // LoginRequest ...

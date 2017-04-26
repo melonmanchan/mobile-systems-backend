@@ -6,13 +6,13 @@ import (
 
 	"time"
 
-	"./app"
-	"./aws"
-	"./config"
-	"./handlers"
-	"./middleware"
-	"./models"
-	"./notifications"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/aws"
+	"github.com/melonmanchan/mobile-systems-backend/config"
+	"github.com/melonmanchan/mobile-systems-backend/handlers"
+	"github.com/melonmanchan/mobile-systems-backend/middleware"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	"github.com/melonmanchan/mobile-systems-backend/notifications"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"

@@ -1,10 +1,10 @@
 package app
 
 import (
-	"../aws"
-	"../config"
-	"../models"
-	"../notifications"
+	"github.com/melonmanchan/mobile-systems-backend/aws"
+	"github.com/melonmanchan/mobile-systems-backend/config"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	"github.com/melonmanchan/mobile-systems-backend/notifications"
 )
 
 // App ...

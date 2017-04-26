@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"time"
 
-	"../app"
-	"../models"
-	"../types"
-	"../utils"
 	"github.com/gorilla/mux"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	"github.com/melonmanchan/mobile-systems-backend/types"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
 )
 
 // AuthHandler ...

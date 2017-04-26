@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"../app"
-	"../types"
-	"../utils"
 	"github.com/gorilla/mux"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/types"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
 )
 
 // SubjectHandler ...

@@ -9,8 +9,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"../config"
 	"github.com/jmoiron/sqlx"
+	"github.com/melonmanchan/mobile-systems-backend/config"
 )
 
 // Client ...

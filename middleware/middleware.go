@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"../app"
-	"../types"
-	"../utils"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/types"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
 
 	"github.com/urfave/negroni"
 )

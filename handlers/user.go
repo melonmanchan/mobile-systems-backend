@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"../app"
-	"../models"
-	"../types"
-	"../utils"
+	"github.com/melonmanchan/mobile-systems-backend/app"
+	"github.com/melonmanchan/mobile-systems-backend/models"
+	"github.com/melonmanchan/mobile-systems-backend/types"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
+
 	"github.com/gorilla/mux"
 	"github.com/guregu/null"
 )

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"../types"
+	"github.com/melonmanchan/mobile-systems-backend/types"
 )
 
 // FailResponse ...

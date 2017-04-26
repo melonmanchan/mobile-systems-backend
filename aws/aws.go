@@ -7,8 +7,8 @@ import (
 	"mime"
 	"net/http"
 
-	"../config"
-	"../utils"
+	"github.com/melonmanchan/mobile-systems-backend/config"
+	"github.com/melonmanchan/mobile-systems-backend/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"

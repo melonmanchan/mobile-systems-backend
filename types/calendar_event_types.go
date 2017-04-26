@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	"../models"
+	"github.com/melonmanchan/mobile-systems-backend/models"
 )
 
 // CreateFreeEventRequest ...

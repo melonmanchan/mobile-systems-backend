@@ -3,9 +3,9 @@ package notifications
 import (
 	"encoding/json"
 
-	"../config"
-	"../models"
 	"github.com/maddevsio/fcm"
+	"github.com/melonmanchan/mobile-systems-backend/config"
+	"github.com/melonmanchan/mobile-systems-backend/models"
 )
 
 // Firebase ...
