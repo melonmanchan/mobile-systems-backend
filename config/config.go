@@ -11,6 +11,7 @@ type S3Config struct {
 // Config ...
 type Config struct {
 	S3Conf            S3Config
+	Port              string
 	DatabaseURL       string
 	JWTSecret         string
 	FirebaseServerKey string
@@ -22,6 +23,7 @@ var defaultConf = Config{
 		Bucket: "tuteepics",
 		Region: "eu-central-1",
 	},
+	Port:              "8000",
 	JWTSecret:         "secret",
 	FirebaseServerKey: "",
 	MigrationsPath:    "./migrations",
@@ -36,8 +38,13 @@ func ParseTuteeConfig() Config {
 	path := os.Getenv("MIGRATIONS_PATH")
 
 	db_path := os.Getenv("DATABASE_URL")
+	port := os.Getenv("PORT")
 
 	cfg.DatabaseURL = db_path
+
+	if port != "" {
+		cfg.Port = port
+	}
 
 	if jwt != "" {
 		cfg.JWTSecret = jwt

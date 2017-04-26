@@ -124,7 +124,7 @@ func main() {
 
 	server := &http.Server{
 		Handler:      n,
-		Addr:         ":8080",
+		Addr:         ":" + config.Port,
 		WriteTimeout: 35 * time.Second,
 		ReadTimeout:  35 * time.Second,
 	}
