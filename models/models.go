@@ -10,7 +10,6 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/melonmanchan/mobile-systems-backend/config"
 )
 
 // Client ...
@@ -19,9 +18,7 @@ type Client struct {
 }
 
 // PerformPendingMigrations ...
-func PerformPendingMigrations(path string, pgConf config.PostgresConfig) []error {
-	connectionString := pgConf.PostgresConfigToConnectionString()
-
+func PerformPendingMigrations(path string, connectionString string) []error {
 	errors, ok := migrate.UpSync(connectionString, path)
 
 	if !ok {
@@ -32,8 +29,7 @@ func PerformPendingMigrations(path string, pgConf config.PostgresConfig) []error
 }
 
 // ConnectToDatabase ...
-func ConnectToDatabase(pgConf config.PostgresConfig) (*Client, error) {
-	connectionString := pgConf.PostgresConfigToConnectionString()
+func ConnectToDatabase(connectionString string) (*Client, error) {
 	log.Print("Attempting to connect to " + connectionString)
 	db, err := sqlx.Connect("postgres", connectionString)
 

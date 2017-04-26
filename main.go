@@ -23,7 +23,7 @@ func main() {
 	config := config.ParseTuteeConfig()
 
 	// Attempt to fetch a database connection
-	db, err := models.ConnectToDatabase(config.PgConf)
+	db, err := models.ConnectToDatabase(config.DatabaseURL)
 
 	fb := notifications.BuildFirebaseClient(config)
 
@@ -39,7 +39,7 @@ func main() {
 
 	// Automatically migrate database models if there are any that are unapplied
 	// We use github.com/mattes/migrate
-	errs := models.PerformPendingMigrations(config.MigrationsPath, config.PgConf)
+	errs := models.PerformPendingMigrations(config.MigrationsPath, config.DatabaseURL)
 
 	if errs != nil {
 		log.Fatal(errs)
